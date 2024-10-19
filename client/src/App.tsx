@@ -11,6 +11,7 @@ function App() {
         autoClose={4000}
         transition={Flip}
       />
+
       <RouterProvider router={Index} />
     </div>
   );
