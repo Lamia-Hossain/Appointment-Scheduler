@@ -40,11 +40,6 @@ class User {
     const sqlQuery = "SELECT Name FROM User WHERE UserID = ?";
     return await db.promise().query(sqlQuery, [userID]);
   }
-
-  async getUserByNameExcludingId(name, userId) {
-    const sqlQuery = "SELECT * FROM User WHERE Name = ? AND UserID != ?";
-    return await db.promise().query(sqlQuery, [name, userId]);
-  }
 }
 
 module.exports = new User();

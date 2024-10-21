@@ -126,34 +126,6 @@ class UserController {
       res.status(500).json({ error: error.message });
     }
   }
-
-  async updatePasswordAndName(req, res) {
-    try {
-      const userId = req.params.id;
-      const { password, name } = req.body;
-
-      // Check if the new name is already in use by another user (excluding the current user)
-      const existingUser = await User.getUserByNameExcludingId(name, userId);
-
-      if (existingUser && existingUser.length > 0) {
-        return res
-          .status(400)
-          .json({ error: "Username is already in use by another user" });
-      }
-
-      // Hash the password
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      // Update password and name
-      await User.updatePasswordAndName(userId, hashedPassword, name);
-
-      res
-        .status(200)
-        .json({ message: "Password and Username updated successfully" });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  }
 }
 
 module.exports = new UserController();
