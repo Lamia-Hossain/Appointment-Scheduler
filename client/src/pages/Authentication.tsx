@@ -48,9 +48,12 @@ const Authentication: React.FC = () => {
         style={{ height: 520, width: 520 }}
       />
 
-      <Card style={{ width: 400 }} className="shadow">
-        <h1 className="text-2xl md:text-4xl font-semibold">Login</h1>
-
+      <Card style={{ width: 350 }} className="shadow">
+        <h1 className="text-2xl font-semibold">
+          Get It Done
+          <br />
+          Schedule Today!
+        </h1>
         <Formik
           initialValues={{
             username: "",
@@ -60,37 +63,29 @@ const Authentication: React.FC = () => {
           onSubmit={handleSubmit}
         >
           {() => (
-            <Form className="flex flex-col gap-3">
-              <div className="flex flex-col">
-                <label
-                  htmlFor="username"
-                  className="text-sm font-medium text-gray-700"
-                >
-                  Username / Email
-                </label>
-                <Field
-                  type="text"
-                  name="username"
-                  placeholder="Username / Email"
-                />
-              </div>
+            <Form className="flex flex-col gap-3 items-center mt-5">
+              <Field
+                label="Username"
+                type="text"
+                name="username"
+                placeholder="Username / Email"
+                className="block w-full px-3 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
 
-              <div className="flex flex-col">
-                <label
-                  htmlFor="password"
-                  className="text-sm font-medium text-gray-700"
-                >
-                  Password
-                </label>
-                <Field
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  className="block w-full px-3 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-              </div>
+              <Field
+                label="Password"
+                type="password"
+                name="password"
+                placeholder="Password"
+                className="block w-full px-3 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
 
-              <Field type="submit" name="Login" isLoading={isLoading} />
+              <Field
+                type="submit"
+                name="Login"
+                isLoading={isLoading}
+                buttonText="Login"
+              />
             </Form>
           )}
         </Formik>

@@ -94,4 +94,4 @@ export const inputFieldCSS =
 export const textAreaFieldCSS =
   "textarea textarea-primary w-full max-w-xs bg-base-50";
 export const buttonFieldCSS =
-  "w-full py-3 px-2 bg-primary text-white font-quando rounded-full hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary";
+  "w-max min-w-20 p-2 bg-[#8645a8] text-white shadow-md hover:shadow-lg mx-auto font-quando rounded-full hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary";
