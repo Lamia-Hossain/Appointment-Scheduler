@@ -27,7 +27,7 @@ export const privateRequest = axios.create({
  */
 privateRequest.interceptors.request.use((config) => {
   // get token from localStorage
-  const TOKEN = localStorage.getItem("pahonaToken");
+  const TOKEN = localStorage.getItem("termin");
 
   // if token is not present in the localStorage
   // then logout the user and remove the token from the localStorage
@@ -56,7 +56,7 @@ privateRequest.interceptors.request.use((config) => {
 // logout method
 export const logout = () => {
   // remove token from the localStorage
-  localStorage.removeItem("pahonaToken");
+  localStorage.removeItem("termin");
   // Redirect to the login page using plain JavaScript
   window.location.href = "/";
 };

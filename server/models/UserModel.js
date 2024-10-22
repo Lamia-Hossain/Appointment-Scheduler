@@ -8,7 +8,8 @@ class User {
 
   async getUserByName(name) {
     const sqlQuery = "SELECT * FROM User WHERE Name = ?";
-    return await db.promise().query(sqlQuery, [name]);
+    const [rows] = await db.promise().query(sqlQuery, [name]);
+    return rows;
   }
 
   async getUserById(id) {

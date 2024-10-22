@@ -9,11 +9,12 @@ class UserController {
 
       // Check if the user with the provided name already exists
       const existingUser = await User.getUserByName(name);
-      if (existingUser && existingUser.length > 0) {
-        res
+      console.log(existingUser);
+
+      if (existingUser.length > 0) {
+        return res
           .status(400)
           .json({ error: "User with the same name already exists" });
-        return;
       }
 
       // Hash the password
@@ -26,17 +27,17 @@ class UserController {
 
       const result = await User.createUser(newUser);
 
-      // Create a JWT token after registration
       const token = jwt.sign(
-        { userId: result.insertId },
+        { userId: result[0].insertId },
         process.env.JWT_SECRET,
         { expiresIn: "1h" }
       );
 
+      console.log("JWT Secret:", process.env.JWT_SECRET);
       res.status(201).json({
         message: "User registered successfully",
         token,
-        userId: result.insertId,
+        userId: result[0].insertId,
       });
     } catch (error) {
       res.status(500).json({ error: error.message });

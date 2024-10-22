@@ -67,7 +67,7 @@ const Field = ({
           {/* Eye Icon for Toggling Password Visibility */}
           {type === "password" && (
             <span
-              className="absolute inset-y-0 right-[23px] top-1 pr-4 flex items-center cursor-pointer"
+              className="absolute inset-y-0 right-[16px] top-1 flex items-center cursor-pointer"
               onClick={togglePasswordVisibility}
             >
               {showPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />}
@@ -90,7 +90,7 @@ export default Field;
 
 // CSS classes for various input types
 export const inputFieldCSS =
-  "block w-full p-3 bg-gray-50 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm";
+  "block w-full p-3 bg-gray-50 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm";
 export const textAreaFieldCSS =
   "textarea textarea-primary w-full max-w-xs bg-base-50";
 export const buttonFieldCSS =

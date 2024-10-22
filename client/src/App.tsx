@@ -1,5 +1,7 @@
 import { RouterProvider } from "react-router-dom";
 import { Flip, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import "./App.css";
 import Index from "./routers/Index";
 

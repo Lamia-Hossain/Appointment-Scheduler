@@ -4,10 +4,9 @@ import { toast } from "react-toastify";
 import { Dispatch } from "redux";
 import { NavigateFunction } from "react-router-dom";
 
-// Define types for the data and dispatch functions
 interface AuthData {
   password: string;
-  [key: string]: any; // For additional fields
+  [key: string]: any;
 }
 
 interface ProfileData {
@@ -27,12 +26,12 @@ export const login = async (
   try {
     const res = await publicRequest({
       method: "POST",
-      url: `jwt-auth/v1/token/`,
+      url: `/user/login`,
       data,
     });
     dispatch(addAuthData(res.data));
-    localStorage.setItem("pahonaToken", res.data?.token);
-    navigate(res.data.role === "ADMIN" ? "/admin/dashboard" : "/dashboard");
+    localStorage.setItem("termin", res.data?.token);
+    navigate("/user/appointments");
     toast.success("Login successful!");
   } catch (err: any) {
     toast.error(err.response?.data?.message);
@@ -52,12 +51,11 @@ export const register = async (
   try {
     const res = await publicRequest({
       method: "POST",
-      url: `custom/v1/register`,
+      url: `/user/register`,
       data,
     });
     dispatch(addAuthData(res.data));
-    navigate("/login", { replace: true });
-    toast.success("Please check your mail address");
+    navigate("/", { replace: true });
   } catch (err: any) {
     toast.error(err.response?.data?.message);
   } finally {
