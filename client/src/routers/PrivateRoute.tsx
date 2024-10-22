@@ -19,7 +19,9 @@ const PrivateRoute = ({ roles }: Role) => {
     <>
       <SideBar />
       <TopBar />
-      <Outlet />
+      <div className="ml-0 lg:ml-[170px]">
+        <Outlet />
+      </div>
     </>
   );
 };

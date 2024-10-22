@@ -5,7 +5,7 @@ import "../styles/scrollbar.css";
 import Layout from "../layouts/Layout";
 import PrivateRoute from "./PrivateRoute";
 import { NotFound } from "../layouts/NotFound";
-import { Login, Signup } from "../pages";
+import { Appointment, Login, Signup } from "../pages";
 
 const router = createBrowserRouter([
   {
@@ -26,7 +26,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: "appointments",
-            element: <>jsdjsdus</>,
+            element: <Appointment />,
           },
           {
             path: "users",

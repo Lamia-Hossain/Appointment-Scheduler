@@ -10,6 +10,7 @@ import { register } from "../../api/services/auth.services";
 import { authValidate } from "../../validation/auth.schema";
 import { AuthFormValues } from "../../validation/dataTypes";
 import clockCalendar from "../../assets/clock-calendar.png";
+
 const Signup = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();

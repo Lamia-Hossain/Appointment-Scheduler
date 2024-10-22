@@ -5,8 +5,9 @@ import { Link, useNavigate } from "react-router-dom";
 import Field from "../../components/forms/Field";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
-import { login } from "../../api/services/auth.services";
 import { Slide } from "react-awesome-reveal";
+
+import { login } from "../../api/services/auth.services";
 import { AuthFormValues } from "../../validation/dataTypes";
 import { authValidate } from "../../validation/auth.schema";
 
@@ -14,10 +15,8 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // State to manage loading status
   const [isLoading, setIsLoading] = useState(false);
 
-  // Handle form submission with proper types
   const handleSubmit = (
     values: AuthFormValues,
     { setSubmitting }: FormikHelpers<AuthFormValues>
