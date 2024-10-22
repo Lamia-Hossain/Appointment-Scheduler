@@ -1,7 +1,8 @@
 import { Outlet } from "react-router-dom";
-
+import SideBar from "../layouts/SideBar";
 // Internal dependencies
 import { getToken, tokenDecoded } from "../utils/tokenHelper";
+import TopBar from "../layouts/TopBar";
 
 interface Role {
   roles: any;
@@ -14,7 +15,13 @@ const PrivateRoute = ({ roles }: Role) => {
     console.log("Logout");
   }
 
-  return <Outlet />; // Render child routes
+  return (
+    <>
+      <SideBar />
+      <TopBar />
+      <Outlet />
+    </>
+  );
 };
 
 export default PrivateRoute;

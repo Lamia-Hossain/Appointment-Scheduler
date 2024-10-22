@@ -21,12 +21,16 @@ const router = createBrowserRouter([
         element: <Signup />,
       },
       {
-        path: "/user",
+        path: "/",
         element: <PrivateRoute roles={["user"]} />,
         children: [
           {
             path: "appointments",
             element: <>jsdjsdus</>,
+          },
+          {
+            path: "users",
+            element: <>jsdcaAFEAjsdus</>,
           },
         ],
       },

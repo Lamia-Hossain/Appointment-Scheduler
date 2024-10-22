@@ -28,7 +28,11 @@ const Signup = () => {
   return (
     <div className="flex flex-row flex-wrap gap-10 lg:gap-20 items-center">
       <Slide direction="left">
-        <img src={clockCalendar} alt="clock-calendar" className="w-96 h-96" />
+        <img
+          src={clockCalendar}
+          alt="clock-calendar"
+          className="w-[500px] h-[500px]"
+        />
       </Slide>
 
       <Slide direction="right">
