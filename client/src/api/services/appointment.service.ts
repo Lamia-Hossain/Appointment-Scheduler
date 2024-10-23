@@ -30,17 +30,36 @@ export const getAllAppointments = async (
   try {
     const res = await privateRequest({
       method: "GET",
-      url: `/custom/v1/appointment/all`,
+      url: `/appointment`,
     });
     dispatch(getAppointments(res.data));
   } catch (error: any) {
-    toast.error(error.response?.data?.message);
+    toast.error(error.response?.data?.error);
   } finally {
     setIsLoading(false);
   }
 };
 
 export const getAllAppointmentsByUserId = async (
+  setIsLoading: (loading: boolean) => void,
+  userId: string,
+  dispatch: DispatchType
+) => {
+  setIsLoading(true);
+  try {
+    const res = await privateRequest({
+      method: "GET",
+      url: `/appointment/user/${userId}`,
+    });
+    dispatch(getAppointmentsByUserId(res.data));
+  } catch (error: any) {
+    toast.error(error.response?.data?.error);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+export const getAppointmentsByAppointmentId = async (
   setIsLoading: (loading: boolean) => void,
   userId: string, // or number, depending on your userId type
   dispatch: DispatchType
@@ -49,11 +68,11 @@ export const getAllAppointmentsByUserId = async (
   try {
     const res = await privateRequest({
       method: "GET",
-      url: `/custom/v1/appointment/user/${userId}`,
+      url: `/appointment/${userId}`,
     });
     dispatch(getAppointmentsByUserId(res.data));
   } catch (error: any) {
-    toast.error(error.response?.data?.message);
+    toast.error(error.response?.data?.error);
   } finally {
     setIsLoading(false);
   }
@@ -74,8 +93,8 @@ export const addAppointment = async (
     dispatch(addAppointmentData(res.data));
     toast.success("New appointment has been added!");
   } catch (error: any) {
-    toast.error(error.response?.data?.message);
-    throw Error(error.response?.data?.message);
+    toast.error(error.response?.data?.error);
+    throw Error(error.response?.data?.error);
   } finally {
     setLoading(false);
   }
@@ -91,14 +110,14 @@ export const editAppointment = async (
   try {
     const res = await privateRequest({
       method: "POST",
-      url: `/custom/v1/appointment/update/${appointmentId}`,
+      url: `/appointment/${appointmentId}`,
       data: data,
     });
     dispatch(editAppointmentData(res.data));
     toast.success("Your Appointment has been updated!");
   } catch (error: any) {
-    toast.error(error.response?.data?.message);
-    throw Error(error.response?.data?.message);
+    toast.error(error.response?.data?.error);
+    throw Error(error.response?.data?.error);
   } finally {
     setLoading(false);
   }
@@ -106,22 +125,22 @@ export const editAppointment = async (
 
 export const editAppointmentStatus = async (
   appointmentId: number,
-  data: AppointmentData,
+  data: string,
   setLoading: (loading: boolean) => void,
   dispatch: DispatchType
 ) => {
   setLoading(true);
   try {
     const res = await privateRequest({
-      method: "POST",
-      url: `/custom/v1/appointment/update-status/${appointmentId}`,
-      data: data,
+      method: "PUT",
+      url: `/appointment/${appointmentId}/status`,
+      data: JSON.stringify({ data }),
     });
     dispatch(editAppointmentData(res.data));
     toast.success("Appointment has been updated!");
   } catch (error: any) {
-    toast.error(error.response?.data?.message);
-    throw Error(error.response?.data?.message);
+    toast.error(error.response?.data?.error);
+    throw Error(error.response?.data?.error);
   } finally {
     setLoading(false);
   }
@@ -130,18 +149,18 @@ export const editAppointmentStatus = async (
 export const deleteAppointment = async (
   setIsLoading: (loading: boolean) => void,
   dispatch: DispatchType,
-  appointment_id: string // or number
+  appointment_id: string | number
 ) => {
   setIsLoading(true);
   try {
     await privateRequest({
       method: "DELETE",
-      url: `/custom/v1/appointment/delete/${appointment_id}`,
+      url: `/appointment/${appointment_id}`,
     });
     dispatch(deleteAppointmentSuccess(appointment_id));
     toast.success("Appointment has been deleted!");
   } catch (error: any) {
-    toast.error(error.response?.data?.message);
+    toast.error(error.response?.data?.error);
   } finally {
     setIsLoading(false);
   }

@@ -7,15 +7,24 @@ class AppointmentController {
     try {
       const appointmentData = req.body;
 
+      // Convert the time to 24-hour format
       const timeIn24HourFormat = moment(appointmentData.time, "hh:mm A").format(
         "HH:mm"
       );
       appointmentData.time = timeIn24HourFormat;
 
+      // Create the appointment in the database
       const result = await Appointment.createAppointment(appointmentData);
+
+      // Fetch the newly created appointment using the inserted ID
+      const appointmentId = result[0].insertId;
+      const newAppointment = await Appointment.getAppointmentById(
+        appointmentId
+      );
+
       res.status(201).json({
         message: "Appointment created successfully",
-        appointmentId: result[0].insertId,
+        data: newAppointment[0],
       });
     } catch (error) {
       res.status(500).json({ error: error.message });

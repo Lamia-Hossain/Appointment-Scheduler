@@ -38,7 +38,10 @@ export const appointmentSlice = createSlice({
         state.appointments[index] = action.payload;
       }
     },
-    deleteAppointmentSuccess: (state, action: PayloadAction<string>) => {
+    deleteAppointmentSuccess: (
+      state,
+      action: PayloadAction<string | number>
+    ) => {
       state.appointments = state.appointments.filter(
         (appointment) => appointment.id !== action.payload
       );

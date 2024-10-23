@@ -8,11 +8,14 @@ const SetAppointment = () => {
   const [isUserLoading, setIsUserLoading] = useState(false);
 
   const { users } = useSelector((state: any) => state.users);
+  const { auth } = useSelector((state: any) => state.auth);
 
   useEffect(() => {
     getAllUsers(dispatch, setIsUserLoading);
   }, [dispatch]);
-
+  const filteredUsers = users[0]?.filter(
+    (user: any) => user.UserID !== auth?.userId
+  );
   return (
     <div className="flex flex-col w-max mx-auto">
       <div className="text-2xl font-semibold flex gap-1 justify-center items-center">
@@ -21,7 +24,7 @@ const SetAppointment = () => {
         <p className="hidden md:block w-24 h-[2px] bg-[#8645a8] mt-1"></p>
       </div>
 
-      <CreateAppointment users={users?.[0]} />
+      <CreateAppointment users={filteredUsers} />
     </div>
   );
 };

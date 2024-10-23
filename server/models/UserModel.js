@@ -14,7 +14,8 @@ class User {
 
   async getUserById(id) {
     const sqlQuery = "SELECT * FROM User WHERE UserID = ?";
-    return await db.promise().query(sqlQuery, [id]);
+    const [result] = await db.promise().query(sqlQuery, [id]);
+    return result;
   }
 
   async updateUser(id, user) {
@@ -40,6 +41,11 @@ class User {
   async getUserNameByID(userID) {
     const sqlQuery = "SELECT Name FROM User WHERE UserID = ?";
     return await db.promise().query(sqlQuery, [userID]);
+  }
+
+  async getAllUsersExcept(userId) {
+    const sqlQuery = "SELECT Name, UserID FROM User WHERE UserID != ?";
+    return await db.promise().query(sqlQuery, [userId]);
   }
 }
 

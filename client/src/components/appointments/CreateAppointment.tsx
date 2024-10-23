@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import { Calendar, TimePicker, Button, message, Table } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 import { useDispatch, useSelector } from "react-redux";
-import { addAppointment } from "../../api/services/appointment.service";
+import {
+  addAppointment,
+  getAllAppointmentsByUserId,
+} from "../../api/services/appointment.service";
 import { User } from "../../validation/dataTypes";
 
 interface CreateAppointmentProps {
@@ -44,10 +47,9 @@ const CreateAppointment = ({ users }: CreateAppointmentProps) => {
       scheduledBy: auth?.userId,
     };
 
-    console.log("Creating Appointment with Data:", appointmentData);
-
     try {
       await addAppointment(appointmentData, setIsLoading, dispatch);
+      getAllAppointmentsByUserId(setIsLoading, auth.userId, dispatch);
       message.success("Appointment created successfully!");
       setButtonText("Appointment Created");
     } catch (error) {

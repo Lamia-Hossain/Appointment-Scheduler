@@ -1,162 +1,244 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ConfigProvider, Segmented, Table, Tag, TableColumnsType } from "antd";
-import { EditTwoTone, DeleteTwoTone } from "@ant-design/icons";
+import {
+  CheckCircleTwoTone,
+  CloseCircleTwoTone,
+  StopTwoTone,
+  UndoOutlined,
+} from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  deleteAppointment,
+  editAppointmentStatus,
   getAllAppointmentsByUserId,
 } from "../../api/services/appointment.service";
-import GeneralModal from "../GeneralModal";
-import EditAppointment from "./EditAppointment";
+import { Appointment } from "../../validation/dataTypes";
+import { getUserById } from "../../api/services/users.service";
+import { Tooltip } from "antd";
 
-export type Appointment = {
-  id: string;
-  date: string;
-  time: string;
-  appointment_status: string;
-};
-
-const SeeAppointments: React.FC = () => {
+const SeeAppointments = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [value, setValue] = useState<string>("requested");
-  const [modal, setModal] = useState<boolean>(false);
-  const [selectedAppointment, setSelectedAppointment] =
-    useState<Appointment | null>(null);
-
+  const [value, setValue] = useState<string>("Pending");
   const { auth } = useSelector((state: any) => state.auth);
   const { appointments } = useSelector((state: any) => state.appointments);
+  const [usersMap, setUsersMap] = useState<{ [key: string]: string }>({});
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const userPromises = appointments.map(
+        (appointment: { ScheduledWith: string | number }) =>
+          getUserById(appointment.ScheduledWith)
+      );
+      const users = await Promise.all(userPromises);
+      const mappedUsers = appointments.reduce(
+        (
+          acc: { [x: string]: any },
+          appointment: { ScheduledWith: string | number },
+          index: number
+        ) => {
+          acc[appointment.ScheduledWith] = users[index];
+          return acc;
+        },
+        {}
+      );
+      setUsersMap(mappedUsers);
+    };
+
+    if (appointments.length) {
+      fetchUsers();
+    }
+  }, [appointments]);
 
   useEffect(() => {
     if (!appointments.length) {
-      getAllAppointmentsByUserId(setIsLoading, auth.user_id, dispatch);
+      getAllAppointmentsByUserId(setIsLoading, auth.userId, dispatch);
     }
-  }, [appointments, auth.user_id, dispatch]);
+  }, [appointments, auth.userId, dispatch]);
 
-  const toggleModal = () => setModal(!modal);
-
-  const handleDeleteAppointment = (appointment_id: string) => {
-    if (window.confirm("Are you sure you want to delete this appointment?")) {
-      deleteAppointment(setIsLoading, dispatch, appointment_id);
-    }
+  const handleChangeAppointmentStatus = (id: number, status: string) => {
+    editAppointmentStatus(id, status, setIsLoading, dispatch);
   };
 
-  // Define columns with a proper type
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    const options: Intl.DateTimeFormatOptions = {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    };
+    return date.toLocaleDateString("en-GB", options).replace(/ /g, "-");
+  };
+
+  const isUpcoming = (dateString: string, timeString: string): boolean => {
+    const [hours, minutes] = timeString.split(":").map(Number);
+    const appointmentDate = new Date(dateString);
+    appointmentDate.setHours(hours, minutes, 0, 0);
+
+    const currentDate = new Date();
+    return appointmentDate > currentDate;
+  };
+
   const columns: TableColumnsType<Appointment> = [
-    { title: "Date", dataIndex: "date", key: "date", align: "center" },
-    { title: "Time", dataIndex: "time", key: "time", align: "center" },
     {
-      title: "Status",
-      dataIndex: "appointment_status",
-      key: "appointment_status",
+      title: "Scheduled With",
+      dataIndex: "ScheduledWith",
+      key: "ScheduledWith",
       align: "center",
-      render: (status: string) => {
-        const colorMap: { [key: string]: string } = {
-          requested: "blue",
-          approved: "green",
-          unapproved: "red",
-        };
-        return (
-          <Tag color={colorMap[status] || "gray"}>{status?.toUpperCase()}</Tag>
+      render: (scheduledWithId: string) =>
+        scheduledWithId === auth.userId
+          ? "With Me"
+          : usersMap[scheduledWithId] || "Unknown",
+    },
+    { title: "Title", dataIndex: "Title", key: "Title", align: "center" },
+    {
+      title: "Description",
+      dataIndex: "Description",
+      key: "Description",
+      align: "center",
+    },
+    {
+      title: "Date",
+      dataIndex: "Date",
+      key: "Date",
+      align: "center",
+      render: (date: string) => formatDate(date),
+    },
+    { title: "Time", dataIndex: "Time", key: "Time", align: "center" },
+    {
+      title: "Type",
+      key: "type",
+      align: "center",
+      render: (record: Appointment) => {
+        const upcoming = isUpcoming(record.Date, record.Time);
+        return upcoming ? (
+          <Tag color="orange">Upcoming</Tag>
+        ) : (
+          <Tag color="gray">Past</Tag>
         );
+      },
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      align: "center",
+      render: (_: any, record: Appointment) => {
+        if (record.Status === "Pending") {
+          if (record.ScheduledWith === auth.userId) {
+            return (
+              <div>
+                <Tooltip title="Accept">
+                  <CheckCircleTwoTone
+                    onClick={() =>
+                      handleChangeAppointmentStatus(
+                        record.AppointmentID,
+                        "Accepted"
+                      )
+                    }
+                    style={{ cursor: "pointer", marginRight: "8px" }}
+                    twoToneColor="#52c41a"
+                  />
+                </Tooltip>
+                <Tooltip title="Decline">
+                  <CloseCircleTwoTone
+                    onClick={() =>
+                      handleChangeAppointmentStatus(
+                        record.AppointmentID,
+                        "Declined"
+                      )
+                    }
+                    style={{ cursor: "pointer" }}
+                    twoToneColor="#eb2f96"
+                  />
+                </Tooltip>
+              </div>
+            );
+          } else {
+            return (
+              <Tooltip title="Cancel">
+                <StopTwoTone
+                  onClick={() =>
+                    handleChangeAppointmentStatus(
+                      record.AppointmentID,
+                      "Cancelled"
+                    )
+                  }
+                  style={{ cursor: "pointer" }}
+                  twoToneColor="#eb2f96"
+                />
+              </Tooltip>
+            );
+          }
+        } else {
+          return (
+            <Tooltip title="Undo">
+              <UndoOutlined
+                onClick={() =>
+                  handleChangeAppointmentStatus(record.AppointmentID, "Pending")
+                }
+                style={{ cursor: "pointer" }}
+                twoToneColor="#eb2f96"
+              />
+            </Tooltip>
+          );
+        }
       },
     },
   ];
 
-  // Conditionally add edit and delete columns if the value is "requested"
-  if (value === "requested") {
-    columns.push(
-      {
-        title: "Edit",
-        key: "edit",
-        align: "center",
-        render: (_: any, record: Appointment) => (
-          <EditTwoTone
-            onClick={() => {
-              setSelectedAppointment(record);
-              toggleModal();
-            }}
-            style={{ cursor: "pointer" }}
-          />
-        ),
-      },
-      {
-        title: "Delete",
-        key: "delete",
-        align: "center",
-        render: (_: any, record: Appointment) => (
-          <DeleteTwoTone
-            onClick={() => handleDeleteAppointment(record.id)}
-            style={{ cursor: "pointer" }}
-            twoToneColor="#eb2f96"
-          />
-        ),
-      }
-    );
-  }
-
   const statusCounts = appointments.reduce(
-    (acc: { [key: string]: number }, { appointment_status }: Appointment) => {
-      if (appointment_status) {
-        acc[appointment_status.toLowerCase()] += 1;
+    (acc: { [key: string]: number }, { Status }: Appointment) => {
+      if (Status) {
+        acc[Status] += 1;
       }
       return acc;
     },
-    { requested: 0, approved: 0, unapproved: 0 }
+    { Pending: 0, Accepted: 0, Declined: 0 }
   );
 
   const filteredAppointments = appointments.filter(
-    (data: Appointment) => data.appointment_status?.toLowerCase() === value
+    (data: Appointment) => data.Status === value
   );
 
+  const rowClassName = (record: Appointment): string => {
+    return isUpcoming(record.Date, record.Time) ? "upcoming-row" : "";
+  };
+
   return (
-    <>
-      <div className="flex flex-col gap-5 mx-auto justify-center items-center">
-        <p className="text-2xl text-center font-semibold text-black">
-          Status Of Your Appointments
-        </p>
-        <Segmented
-          options={[
-            `Requested (${statusCounts.requested})`,
-            `Approved (${statusCounts.approved})`,
-            `Unapproved (${statusCounts.unapproved})`,
-          ]}
-          onChange={(value) => setValue(value.split(" ")[0].toLowerCase())}
-          size="large"
-        />
-        <div className="w-full lg:w-[90%] my-6">
-          <ConfigProvider
-            theme={{
-              components: {
-                Table: {
-                  headerBg: "#255957",
-                  headerColor: "white",
-                },
+    <div className="flex flex-col gap-5 mx-auto justify-center items-center">
+      <p className="text-2xl text-center font-semibold text-black">
+        Status Of Your Appointments
+      </p>
+      <Segmented
+        options={[
+          `Pending (${statusCounts.Pending})`,
+          `Accepted (${statusCounts.Accepted})`,
+          `Declined (${statusCounts.Declined})`,
+        ]}
+        onChange={(value) => setValue(value.split(" ")[0])}
+        size="large"
+      />
+      <div className="w-full lg:w-[90%] my-6">
+        <ConfigProvider
+          theme={{
+            components: {
+              Table: {
+                headerBg: "#9974ad",
+                headerColor: "white",
               },
-            }}
-          >
-            <Table
-              columns={columns}
-              dataSource={filteredAppointments}
-              pagination={{ pageSize: 15 }}
-              loading={isLoading}
-              style={{ textAlign: "center" }}
-            />
-          </ConfigProvider>
-        </div>
-      </div>
-      {modal && selectedAppointment && (
-        <GeneralModal
-          title="Edit Your Appointment"
-          onClose={() => {
-            toggleModal();
-            setSelectedAppointment(null);
+            },
           }}
         >
-          <EditAppointment prev_appointment={selectedAppointment} />
-        </GeneralModal>
-      )}
-    </>
+          <Table
+            columns={columns}
+            dataSource={filteredAppointments}
+            pagination={{ pageSize: 15 }}
+            loading={isLoading}
+            style={{ textAlign: "center" }}
+            rowClassName={rowClassName} // Apply row className based on appointment type
+          />
+        </ConfigProvider>
+      </div>
+    </div>
   );
 };
 

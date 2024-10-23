@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { getUsers } from "../../store/features/usersSlice";
+import { getUserByUserId, getUsers } from "../../store/features/usersSlice";
 import privateRequest from "../apiConfig";
 import { toast } from "react-toastify";
 
@@ -16,9 +16,17 @@ export const getAllUsers = async (
       dispatch(getUsers(res.data));
     })
     .catch((error) => {
-      toast.error(error.response?.data?.message);
+      toast.error(error.response?.data?.error);
     })
     .finally(() => {
       setIsLoading(false);
     });
+};
+
+export const getUserById = async (userId: string | number) => {
+  const response = await privateRequest({
+    method: "GET",
+    url: `/user/${userId}`,
+  });
+  return response.data.Name;
 };

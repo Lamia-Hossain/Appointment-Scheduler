@@ -109,7 +109,7 @@ class UserController {
       const user = result[0];
 
       const filteredUser = {
-        UserID: user.UserID,
+        // UserID: user.UserID,
         Name: user.Name,
       };
 
