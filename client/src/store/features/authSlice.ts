@@ -3,18 +3,18 @@ import { createSlice } from "@reduxjs/toolkit";
 export const authSlice = createSlice({
   name: "auth",
   initialState: {
-    auth: [],
+    auth: {}, // Change from array to object
+    users: [],
   },
   reducers: {
     addAuthData: (state, { payload }) => {
-      state.auth = payload;
+      state.auth = payload; // Set the entire auth object to the payload
     },
-    editAuthData: (state, { payload }) => {
-      state.auth["nid"] = payload.nid || "";
-      state.auth["contact_number"] = payload.contact_number || "";
+    getUsers: (state, { payload }) => {
+      state.users = payload;
     },
   },
 });
 
-export const { addAuthData, editAuthData } = authSlice.actions;
+export const { addAuthData, getUsers } = authSlice.actions;
 export default authSlice.reducer;

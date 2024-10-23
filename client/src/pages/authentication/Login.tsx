@@ -29,7 +29,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-row flex-wrap gap-10 lg:gap-20 items-center">
+    <div className="flex flex-row flex-wrap gap-10 lg:gap-20 items-center justify-center min-h-screen">
       <Slide direction="left">
         <Player
           autoplay

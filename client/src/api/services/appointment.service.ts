@@ -10,7 +10,6 @@ import privateRequest from "../apiConfig";
 
 // Define the types for appointment data and the dispatch function
 interface AppointmentData {
-  id: number;
   title: string;
   description: string;
   scheduledWith: number;

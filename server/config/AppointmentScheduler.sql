@@ -1,11 +1,13 @@
-create database appointment_scheduler;
+DROP DATABASE appointment_scheduler;
+
+CREATE DATABASE appointment_scheduler;
 
 USE appointment_scheduler;
 
 CREATE TABLE User (
     UserID INT AUTO_INCREMENT PRIMARY KEY,
     Name VARCHAR(255) UNIQUE NOT NULL,
-    Password VARCHAR(255) NOT NULL,
+    Password VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE Appointment (

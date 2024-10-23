@@ -1,33 +1,47 @@
-import React, { useEffect, useState } from "react";
-import { DatePicker, TimePicker, Button, message } from "antd";
+import { useEffect, useState } from "react";
+import { Calendar, TimePicker, Button, message, Table } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs, { Dayjs } from "dayjs";
 import { addAppointment } from "../../api/services/appointment.service";
+import { Form, Formik } from "formik";
+import Field from "../forms/Field";
+import { authValidate } from "../../validation/auth.schema";
+import { getAllUsers } from "../../api/services/auth.services";
 
-const CreateAppointment: React.FC = () => {
+const CreateAppointment = () => {
   const today = dayjs();
   const dispatch = useDispatch();
   const auth = useSelector((state: any) => state.auth.auth);
   const appointments = useSelector(
     (state: any) => state.appointments.appointments
   );
+  const { users } = useSelector((state: any) => state.users);
 
-  const [date, setDate] = useState<Dayjs | null>(today);
-  const [time, setTime] = useState<Dayjs | null>(dayjs());
+  const [date, setDate] = useState<Dayjs | undefined>(today);
+  const [time, setTime] = useState<Dayjs | undefined>(dayjs());
   const [buttonText, setButtonText] = useState("Create Appointment");
   const [multipleDates, setMultipleDates] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    getAllUsers(setIsLoading, dispatch);
+  }, [dispatch]);
 
   const createAppointment = async () => {
+    if (!selectedUserId) {
+      message.warning("Please select a user.");
+      return;
+    }
+
     setButtonText("Creating...");
 
     const appointmentData = {
-      id: 1,
       date: date?.format("YYYY-MM-DD"),
       time: time?.format("hh:mm A"),
       title: auth.user_nickname,
       description: auth.user_email,
-      scheduledWith: auth.contact_number,
+      scheduledWith: Number(selectedUserId), // User ID from table selection
       status: "requested",
     };
 
@@ -45,10 +59,8 @@ const CreateAppointment: React.FC = () => {
     }
   };
 
-  // Update multiple dates whenever appointments change
   useEffect(() => {
     if (appointments && Array.isArray(appointments)) {
-      // Remove duplicates and ensure consistent formatting
       const uniqueDates = [
         ...new Set(
           appointments.map((appointment) =>
@@ -60,28 +72,107 @@ const CreateAppointment: React.FC = () => {
     }
   }, [appointments]);
 
-  // Check if the date is in the multipleDates array
-  const isDateInArray = (date: Dayjs | null) => {
+  const isDateInArray = (date: Dayjs | undefined) => {
     return date
       ? multipleDates.some((d) => dayjs(d).isSame(date, "day"))
       : false;
   };
 
-  return (
-    <div className="flex flex-col lg:flex-row gap-4 justify-center w-full">
-      <DatePicker
-        disabledDate={(current) => isDateInArray(current)}
-        value={date}
-        onChange={(newValue) => setDate(newValue)}
-        style={{ width: "50%" }}
-      />
+  const onDateSelect = (selectedDate: Dayjs) => {
+    if (!isDateInArray(selectedDate)) {
+      setDate(selectedDate);
+    } else {
+      message.warning("This date already has an appointment.");
+    }
+  };
 
-      <TimePicker
-        value={time}
-        onChange={(newValue) => setTime(newValue)}
-        format="hh:mm A"
-        style={{ width: "50%" }}
-        minuteStep={15}
+  // Handle user selection from table
+  const onUserSelect = (record: any) => {
+    setSelectedUserId(record.id); // Set the selected user's ID
+    message.info(`User ${record.username} selected.`);
+  };
+
+  const columns = [
+    {
+      title: "SL",
+      dataIndex: "id",
+      key: "index",
+      align: "center",
+      render: (text: any, record: any, index: number) => index + 1,
+    },
+    {
+      title: "Name",
+      dataIndex: "username",
+      key: "username",
+      align: "center",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+      align: "center",
+    },
+  ];
+
+  return (
+    <div>
+      <Formik
+        initialValues={{
+          title: "",
+          description: "",
+          date: "",
+          time: "",
+          scheduledWith: undefined,
+        }}
+        validationSchema={authValidate}
+        onSubmit={() => {}}
+      >
+        {() => (
+          <Form className="flex flex-col gap-3 items-center my-5">
+            <Field label="Title" type="text" name="title" placeholder="Title" />
+
+            <Field
+              label="Description"
+              type="textarea"
+              name="description"
+              placeholder="Description"
+            />
+
+            <div className="w-[305px] border border-solid p-2 rounded-md">
+              <Calendar
+                fullscreen={false}
+                onSelect={onDateSelect}
+                disabledDate={(current) => isDateInArray(current)}
+                value={date}
+              />
+            </div>
+
+            <TimePicker
+              value={time}
+              onChange={(newValue) => setTime(newValue || undefined)}
+              format="hh:mm A"
+              style={{ width: "50%" }}
+              minuteStep={15}
+            />
+
+            <Field
+              type="submit"
+              name="Create Appointment"
+              isLoading={isLoading}
+              buttonText="Create Appointment"
+            />
+          </Form>
+        )}
+      </Formik>
+
+      <Table
+        columns={columns}
+        dataSource={users}
+        rowKey="id"
+        onRow={(record) => ({
+          onClick: () => onUserSelect(record),
+        })}
+        pagination={false}
       />
 
       <div className="mx-auto mt-3">

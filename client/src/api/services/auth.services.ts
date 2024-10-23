@@ -1,17 +1,11 @@
 import privateRequest, { publicRequest } from "../apiConfig";
-import { addAuthData, editAuthData } from "../../store/features/authSlice";
+import { addAuthData, getUsers } from "../../store/features/authSlice";
 import { toast } from "react-toastify";
 import { Dispatch } from "redux";
 import { NavigateFunction } from "react-router-dom";
 
 interface AuthData {
   password: string;
-  [key: string]: any;
-}
-
-interface ProfileData {
-  firstName: string;
-  lastName: string;
   [key: string]: any;
 }
 
@@ -31,7 +25,7 @@ export const login = async (
     });
     dispatch(addAuthData(res.data));
     localStorage.setItem("termin", res.data?.token);
-    navigate("/user/appointments");
+    navigate("/appointments");
     toast.success("Login successful!");
   } catch (err: any) {
     toast.error(err.response?.data?.message);
@@ -63,25 +57,23 @@ export const register = async (
   }
 };
 
-// Edit profile function
-export const editProfile = async (
-  data: ProfileData,
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+// Get all users function
+export const getAllUsers = async (
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
   dispatch: Dispatch
-): Promise<void> => {
-  setLoading(true);
-  try {
-    const res = await privateRequest({
-      method: "POST",
-      url: `custom/v1/update-user-info/`,
-      data,
+) => {
+  setIsLoading(true);
+  await privateRequest({
+    method: "GET",
+    url: `/user/`,
+  })
+    .then((res) => {
+      dispatch(getUsers(res.data));
+    })
+    .catch((error) => {
+      toast.error(error.response?.data?.message);
+    })
+    .finally(() => {
+      setIsLoading(false);
     });
-    dispatch(editAuthData(res.data));
-    toast.success(res.data.message);
-  } catch (error: any) {
-    toast.error(error.response?.data?.message);
-    throw Error(error.response?.data?.message);
-  } finally {
-    setLoading(false);
-  }
 };
