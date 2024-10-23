@@ -1,61 +1,58 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Calendar, TimePicker, Button, message, Table } from "antd";
-import { useDispatch, useSelector } from "react-redux";
 import dayjs, { Dayjs } from "dayjs";
+import { useDispatch, useSelector } from "react-redux";
 import { addAppointment } from "../../api/services/appointment.service";
-import { Form, Formik } from "formik";
-import Field from "../forms/Field";
-import { authValidate } from "../../validation/auth.schema";
-import { getAllUsers } from "../../api/services/auth.services";
+import { User } from "../../validation/dataTypes";
 
-const CreateAppointment = () => {
+interface CreateAppointmentProps {
+  users: User[];
+}
+
+const CreateAppointment = ({ users }: CreateAppointmentProps) => {
   const today = dayjs();
   const dispatch = useDispatch();
-  const auth = useSelector((state: any) => state.auth.auth);
   const appointments = useSelector(
     (state: any) => state.appointments.appointments
   );
-  const { users } = useSelector((state: any) => state.users);
+  const { auth } = useSelector((state: any) => state.auth);
 
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [date, setDate] = useState<Dayjs | undefined>(today);
   const [time, setTime] = useState<Dayjs | undefined>(dayjs());
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [buttonText, setButtonText] = useState("Create Appointment");
   const [multipleDates, setMultipleDates] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-
-  useEffect(() => {
-    getAllUsers(setIsLoading, dispatch);
-  }, [dispatch]);
 
   const createAppointment = async () => {
-    if (!selectedUserId) {
+    if (!selectedUser) {
       message.warning("Please select a user.");
       return;
     }
 
-    setButtonText("Creating...");
+    // Convert the time to 24-hour format using dayjs
+    const timeIn24HourFormat = time ? time.format("HH:mm") : undefined;
 
     const appointmentData = {
+      title,
+      description,
       date: date?.format("YYYY-MM-DD"),
-      time: time?.format("hh:mm A"),
-      title: auth.user_nickname,
-      description: auth.user_email,
-      scheduledWith: Number(selectedUserId), // User ID from table selection
-      status: "requested",
+      time: timeIn24HourFormat, // Use the 24-hour format time
+      scheduledWith: selectedUser?.UserID,
+      scheduledBy: auth?.userId,
     };
+
+    console.log("Creating Appointment with Data:", appointmentData);
 
     try {
       await addAppointment(appointmentData, setIsLoading, dispatch);
-      setButtonText("Great ! It's Created");
       message.success("Appointment created successfully!");
-
-      setTimeout(() => {
-        setButtonText("Create New Appointment");
-      }, 3000);
+      setButtonText("Appointment Created");
     } catch (error) {
-      setButtonText("Sorry ! Please Try Again.");
       message.error("Failed to create appointment.");
+      setButtonText("Create Appointment");
     }
   };
 
@@ -86,67 +83,75 @@ const CreateAppointment = () => {
     }
   };
 
-  // Handle user selection from table
-  const onUserSelect = (record: any) => {
-    setSelectedUserId(record.id); // Set the selected user's ID
-    message.info(`User ${record.username} selected.`);
+  const onUserSelect = (record: User) => {
+    setSelectedUser(record);
+    message.info(`User ${record.Name} selected.`);
   };
 
   const columns = [
     {
       title: "SL",
-      dataIndex: "id",
+      dataIndex: "UserID",
       key: "index",
-      align: "center",
-      render: (text: any, record: any, index: number) => index + 1,
+      align: "center" as "center",
+      render: (text: any, record: User, index: number) => index + 1,
     },
     {
       title: "Name",
-      dataIndex: "username",
+      dataIndex: "Name",
       key: "username",
-      align: "center",
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      align: "center",
+      align: "center" as "center",
     },
   ];
 
   return (
-    <div>
-      <Formik
-        initialValues={{
-          title: "",
-          description: "",
-          date: "",
-          time: "",
-          scheduledWith: undefined,
-        }}
-        validationSchema={authValidate}
-        onSubmit={() => {}}
-      >
-        {() => (
-          <Form className="flex flex-col gap-3 items-center my-5">
-            <Field label="Title" type="text" name="title" placeholder="Title" />
-
-            <Field
-              label="Description"
-              type="textarea"
-              name="description"
-              placeholder="Description"
+    <div className="flex flex-col gap-3 items-center my-5">
+      <div className="grid grid-cols-2 gap-3 md:gap-10">
+        {/* Title, Description, User Table */}
+        <div className="flex flex-col gap-3 col-span-2 md:col-span-1">
+          <div className="flex flex-col items-start gap-1">
+            <label className="font-semibold">Title</label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Title"
+              className="border rounded p-2 w-full"
             />
+          </div>
 
-            <div className="w-[305px] border border-solid p-2 rounded-md">
-              <Calendar
-                fullscreen={false}
-                onSelect={onDateSelect}
-                disabledDate={(current) => isDateInArray(current)}
-                value={date}
-              />
-            </div>
+          <div className="flex flex-col items-start gap-1">
+            <label className="font-semibold">Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Description"
+              className="border rounded p-2 w-full"
+            />
+          </div>
 
+          <div className="flex flex-col items-start gap-1">
+            <p className="font-semibold">
+              Schedule With:{" "}
+              <span className="text-black">{selectedUser?.Name}</span>
+            </p>
+            <Table
+              columns={columns}
+              dataSource={users}
+              rowKey="UserID"
+              onRow={(record) => ({
+                onClick: () => onUserSelect(record),
+              })}
+              pagination={false}
+              className="border rounded-md w-[260px] overflow-auto max-h-[267px]"
+            />
+          </div>
+        </div>
+
+        {/* Time, Date */}
+        <div className="flex flex-col gap-3 col-span-2 md:col-span-1">
+          <div className="flex flex-col items-start gap-1">
+            <p className="font-semibold">Pick a Time</p>
             <TimePicker
               value={time}
               onChange={(newValue) => setTime(newValue || undefined)}
@@ -154,40 +159,25 @@ const CreateAppointment = () => {
               style={{ width: "50%" }}
               minuteStep={15}
             />
+          </div>
 
-            <Field
-              type="submit"
-              name="Create Appointment"
-              isLoading={isLoading}
-              buttonText="Create Appointment"
-            />
-          </Form>
-        )}
-      </Formik>
-
-      <Table
-        columns={columns}
-        dataSource={users}
-        rowKey="id"
-        onRow={(record) => ({
-          onClick: () => onUserSelect(record),
-        })}
-        pagination={false}
-      />
-
-      <div className="mx-auto mt-3">
-        <Button
-          type="primary"
-          loading={isLoading}
-          onClick={createAppointment}
-          style={{
-            backgroundColor: "#437C90",
-            borderColor: "#437C90",
-          }}
-        >
-          {buttonText}
-        </Button>
+          <div className="flex flex-col items-start gap-1">
+            <p className="font-semibold">Select a Date</p>
+            <div className="w-[305px] border border-solid p-2 rounded-md">
+              <Calendar
+                fullscreen={false}
+                onSelect={(selectedDate) => onDateSelect(selectedDate)}
+                disabledDate={(current) => isDateInArray(current)}
+                value={date}
+              />
+            </div>
+          </div>
+        </div>
       </div>
+
+      <Button type="primary" loading={isLoading} onClick={createAppointment}>
+        {buttonText}
+      </Button>
     </div>
   );
 };

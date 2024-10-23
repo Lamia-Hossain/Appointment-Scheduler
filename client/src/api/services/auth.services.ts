@@ -1,5 +1,5 @@
-import privateRequest, { publicRequest } from "../apiConfig";
-import { addAuthData, getUsers } from "../../store/features/authSlice";
+import { publicRequest } from "../apiConfig";
+import { addAuthData } from "../../store/features/authSlice";
 import { toast } from "react-toastify";
 import { Dispatch } from "redux";
 import { NavigateFunction } from "react-router-dom";
@@ -28,7 +28,7 @@ export const login = async (
     navigate("/appointments");
     toast.success("Login successful!");
   } catch (err: any) {
-    toast.error(err.response?.data?.message);
+    toast.error(err.response?.data?.error);
   } finally {
     setIsLoading(false);
   }
@@ -51,29 +51,8 @@ export const register = async (
     dispatch(addAuthData(res.data));
     navigate("/", { replace: true });
   } catch (err: any) {
-    toast.error(err.response?.data?.message);
+    toast.error(err.response?.data?.error);
   } finally {
     setIsLoading(false);
   }
-};
-
-// Get all users function
-export const getAllUsers = async (
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
-  dispatch: Dispatch
-) => {
-  setIsLoading(true);
-  await privateRequest({
-    method: "GET",
-    url: `/user/`,
-  })
-    .then((res) => {
-      dispatch(getUsers(res.data));
-    })
-    .catch((error) => {
-      toast.error(error.response?.data?.message);
-    })
-    .finally(() => {
-      setIsLoading(false);
-    });
 };

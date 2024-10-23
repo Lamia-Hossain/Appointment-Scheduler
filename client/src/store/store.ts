@@ -12,6 +12,7 @@ import {
 import storage from "redux-persist/lib/storage";
 import authSlice from "./features/authSlice";
 import appointmentSlice from "./features/appointmentsSlice";
+import usersSlice from "./features/usersSlice";
 
 // Persist configuration for authSlice
 const authPersistConfig = {
@@ -23,6 +24,7 @@ const authPersistConfig = {
 const rootReducer = combineReducers({
   auth: persistReducer(authPersistConfig, authSlice),
   appointments: appointmentSlice,
+  users: usersSlice,
 });
 
 // Configure store with types for reducer and middleware

@@ -8,14 +8,14 @@ const Appointment = () => {
 
   const customTheme = {
     token: {
-      colorPrimary: "#437C90", // Change the primary color
-      colorText: "#437C90", // Change text color
-      colorTextTertiary: "#437C90", // Change tertiary text color for tab hover
+      colorPrimary: "#8645a8",
+      colorText: "#9974ad",
+      colorTextTertiary: "#43334c",
     },
   };
 
   return (
-    <div className="mt-10">
+    <div className=" mt-12 lg:mt-10">
       <ConfigProvider theme={customTheme}>
         <Tabs
           defaultActiveKey="1"

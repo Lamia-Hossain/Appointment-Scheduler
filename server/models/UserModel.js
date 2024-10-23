@@ -28,7 +28,7 @@ class User {
   }
 
   async getAllUsers() {
-    const sqlQuery = "SELECT * FROM User";
+    const sqlQuery = "SELECT Name, UserID FROM User";
     return await db.promise().query(sqlQuery);
   }
 

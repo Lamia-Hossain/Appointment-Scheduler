@@ -15,7 +15,8 @@ interface AppointmentData {
   scheduledWith: number;
   time: string | undefined;
   date: string | undefined;
-  status: string;
+  scheduledBy: number;
+  status?: string;
   // Add other fields as needed
 }
 
@@ -67,7 +68,7 @@ export const addAppointment = async (
   try {
     const res = await privateRequest({
       method: "POST",
-      url: "/custom/v1/appointment/create",
+      url: "/appointment",
       data: appointment_data,
     });
     dispatch(addAppointmentData(res.data));

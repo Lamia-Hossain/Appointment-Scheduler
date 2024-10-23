@@ -1,10 +1,17 @@
 const Appointment = require("../models/AppointmentModel");
+const moment = require("moment");
 
 class AppointmentController {
   // Create a new appointment
   async createAppointment(req, res) {
     try {
       const appointmentData = req.body;
+
+      const timeIn24HourFormat = moment(appointmentData.time, "hh:mm A").format(
+        "HH:mm"
+      );
+      appointmentData.time = timeIn24HourFormat;
+
       const result = await Appointment.createAppointment(appointmentData);
       res.status(201).json({
         message: "Appointment created successfully",
@@ -94,11 +101,9 @@ class AppointmentController {
           .status(200)
           .json({ message: "Appointment status updated successfully" });
       } else {
-        return res
-          .status(403)
-          .json({
-            message: "You are not authorized to change this appointment status",
-          });
+        return res.status(403).json({
+          message: "You are not authorized to change this appointment status",
+        });
       }
     } catch (error) {
       res.status(500).json({ error: error.message });

@@ -33,7 +33,7 @@ const Field = ({
   };
 
   return (
-    <div className="w-[260px] flex flex-col gap-2">
+    <div className="w-[260px] flex flex-col gap-1">
       <label htmlFor={field.name} className="flex flex-row gap-2">
         {label}
         {validation && <span className="font-semibold text-red-600">*</span>}
@@ -90,8 +90,8 @@ export default Field;
 
 // CSS classes for various input types
 export const inputFieldCSS =
-  "block w-full p-3 bg-gray-50 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm";
+  "block w-full p-3 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm";
 export const textAreaFieldCSS =
-  "textarea textarea-primary w-full max-w-xs bg-base-50";
+  "textarea textarea-primary w-full p-3 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm";
 export const buttonFieldCSS =
   "w-max min-w-20 p-2 bg-[#8645a8] text-white shadow-md hover:shadow-lg mx-auto font-quando rounded-full hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary";

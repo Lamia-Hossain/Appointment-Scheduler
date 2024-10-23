@@ -34,7 +34,7 @@ const appointmentRoutes = require("./routes/AppointmentRoutes");
 
 // Use routes
 app.use("/user", userRoutes);
-app.use("/appointments", appointmentRoutes);
+app.use("/appointment", appointmentRoutes);
 
 // Set the port
 const port = process.env.PORT || 8080;
