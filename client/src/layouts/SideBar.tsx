@@ -1,7 +1,11 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu } from "antd";
-import { CalendarOutlined, UsergroupAddOutlined } from "@ant-design/icons";
+import {
+  CalendarOutlined,
+  UsergroupAddOutlined,
+  IdcardTwoTone,
+} from "@ant-design/icons";
 import clockCalendar from "../assets/clock-calendar.png";
 
 interface SidebarItem {
@@ -28,7 +32,7 @@ const sidebarItems: SidebarItem[] = [
 const SideBar = () => {
   const location = useLocation();
   return (
-    <div className="shadow fixed left-0 top-0 bottom-0 bg-blue-50 z-50 w-[170px] hidden lg:flex lg:flex-col items-center gap-3">
+    <div className="shadow fixed left-0 top-0 bottom-0 bg-violet-50 z-50 w-[170px] hidden lg:flex lg:flex-col items-center gap-3">
       <img
         src={clockCalendar}
         alt="clock-calendar"
@@ -45,6 +49,9 @@ const SideBar = () => {
           </Menu.Item>
         ))}
       </Menu>
+      <div className="mt-auto p-4">
+        <IdcardTwoTone style={{ cursor: "pointer" }} className="text-2xl" />
+      </div>
     </div>
   );
 };
