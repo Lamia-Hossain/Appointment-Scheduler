@@ -96,13 +96,18 @@ const CreateAppointment = ({ users }: CreateAppointmentProps) => {
       dataIndex: "UserID",
       key: "index",
       align: "center" as "center",
-      render: (text: any, record: User, index: number) => index + 1,
+      render: (index: number) => (
+        <p className="hover:cursor-pointer">{index + 1}</p>
+      ),
     },
     {
       title: "Name",
       dataIndex: "Name",
       key: "username",
       align: "center" as "center",
+      render: (text: any, record: User, index: number) => (
+        <p className="hover:cursor-pointer">{record.Name}</p>
+      ),
     },
   ];
 

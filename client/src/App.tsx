@@ -10,7 +10,7 @@ function App() {
     <div className="App font-poppins">
       <ToastContainer
         position="top-center"
-        autoClose={4000}
+        autoClose={2000}
         transition={Flip}
       />
 

@@ -86,8 +86,6 @@ export const editAppointmentStatus = async (
 ) => {
   setLoading(true);
   try {
-    console.log(appointmentId, status);
-
     const res = await privateRequest({
       method: "PUT",
       url: `/appointment/${appointmentId}/status`,

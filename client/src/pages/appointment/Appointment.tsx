@@ -15,7 +15,7 @@ const Appointment = () => {
   };
 
   return (
-    <div className=" mt-12 lg:mt-10">
+    <div className="mt-12 lg:mt-10">
       <ConfigProvider theme={customTheme}>
         <Tabs
           defaultActiveKey="1"

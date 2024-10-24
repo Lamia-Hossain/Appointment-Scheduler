@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
-import { ConfigProvider, Segmented, Table, Tag, TableColumnsType } from "antd";
+import {
+  ConfigProvider,
+  Segmented,
+  Table,
+  Tag,
+  TableColumnsType,
+  Input,
+  Tooltip,
+} from "antd";
 import {
   CheckCircleTwoTone,
   CloseCircleTwoTone,
@@ -13,15 +21,16 @@ import {
 } from "../../api/services/appointment.service";
 import { Appointment } from "../../validation/dataTypes";
 import { getUserById } from "../../api/services/users.service";
-import { Tooltip } from "antd";
 
 const SeeAppointments = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [value, setValue] = useState<string>("Pending");
+  const [value, setValue] = useState<string>("All"); // Default to 'All' to show all appointments
+  const [searchText, setSearchText] = useState<string>("");
   const { auth } = useSelector((state: any) => state.auth);
   const { appointments } = useSelector((state: any) => state.appointments);
   const [usersMap, setUsersMap] = useState<{ [key: string]: string }>({});
+
   const handleUpdateStatus = async (
     appointmentId: number,
     newStatus: string
@@ -32,7 +41,6 @@ const SeeAppointments = () => {
       setIsLoading,
       dispatch
     );
-
     getAllAppointmentsByUserId(setIsLoading, auth.userId, dispatch);
   };
 
@@ -176,7 +184,6 @@ const SeeAppointments = () => {
                   handleUpdateStatus(record.AppointmentID, "Pending")
                 }
                 style={{ cursor: "pointer" }}
-                twoToneColor="#eb2f96"
               />
             </Tooltip>
           );
@@ -196,7 +203,12 @@ const SeeAppointments = () => {
   );
 
   const filteredAppointments = appointments.filter(
-    (data: Appointment) => data.Status === value
+    (appointment: Appointment) =>
+      (value === "All" || appointment.Status === value) &&
+      (appointment.Title.toLowerCase().includes(searchText.toLowerCase()) ||
+        appointment.Description.toLowerCase().includes(
+          searchText.toLowerCase()
+        ))
   );
 
   const rowClassName = (record: Appointment): string => {
@@ -210,6 +222,7 @@ const SeeAppointments = () => {
       </p>
       <Segmented
         options={[
+          `All (${appointments.length})`,
           `Pending (${statusCounts.Pending})`,
           `Accepted (${statusCounts.Accepted})`,
           `Declined (${statusCounts.Declined})`,
@@ -217,6 +230,12 @@ const SeeAppointments = () => {
         ]}
         onChange={(value) => setValue(value.split(" ")[0])}
         size="large"
+      />
+      <Input
+        placeholder="Search by title or description"
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
+        style={{ marginTop: 10, width: 250 }}
       />
       <div className="w-full lg:w-[90%] my-6">
         <ConfigProvider

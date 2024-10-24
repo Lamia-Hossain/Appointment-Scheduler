@@ -69,15 +69,11 @@ class AppointmentController {
         return res.status(400).json({ message: "Invalid status" });
       }
 
-      // Fetch the appointment to check who scheduled it and who it is scheduled with
       const [appointment] = await Appointment.getAppointmentById(appointmentId);
 
       if (appointment.length === 0) {
         return res.status(404).json({ message: "Appointment not found" });
       }
-
-      const scheduledBy = appointment[0].ScheduledBy;
-      const scheduledWith = appointment[0].ScheduledWith;
 
       if (["Accepted", "Declined", "Cancelled", "Pending"].includes(status)) {
         const result = await Appointment.updateAppointmentStatus(
