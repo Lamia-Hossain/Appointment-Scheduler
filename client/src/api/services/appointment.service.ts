@@ -3,12 +3,10 @@ import {
   getAppointmentsByUserId,
   addAppointmentData,
   editAppointmentData,
-  deleteAppointmentSuccess,
   getAppointments,
 } from "../../store/features/appointmentsSlice";
 import privateRequest from "../apiConfig";
 
-// Define the types for appointment data and the dispatch function
 interface AppointmentData {
   title: string;
   description: string;
@@ -17,7 +15,6 @@ interface AppointmentData {
   date: string | undefined;
   scheduledBy: number;
   status?: string;
-  // Add other fields as needed
 }
 
 type DispatchType = (action: any) => void;
@@ -59,25 +56,6 @@ export const getAllAppointmentsByUserId = async (
   }
 };
 
-export const getAppointmentsByAppointmentId = async (
-  setIsLoading: (loading: boolean) => void,
-  userId: string, // or number, depending on your userId type
-  dispatch: DispatchType
-) => {
-  setIsLoading(true);
-  try {
-    const res = await privateRequest({
-      method: "GET",
-      url: `/appointment/${userId}`,
-    });
-    dispatch(getAppointmentsByUserId(res.data));
-  } catch (error: any) {
-    toast.error(error.response?.data?.error);
-  } finally {
-    setIsLoading(false);
-  }
-};
-
 export const addAppointment = async (
   appointment_data: AppointmentData,
   setLoading: (loading: boolean) => void,
@@ -100,68 +78,31 @@ export const addAppointment = async (
   }
 };
 
-export const editAppointment = async (
-  appointmentId: number,
-  data: AppointmentData,
-  setLoading: (loading: boolean) => void,
-  dispatch: DispatchType
-) => {
-  setLoading(true);
-  try {
-    const res = await privateRequest({
-      method: "POST",
-      url: `/appointment/${appointmentId}`,
-      data: data,
-    });
-    dispatch(editAppointmentData(res.data));
-    toast.success("Your Appointment has been updated!");
-  } catch (error: any) {
-    toast.error(error.response?.data?.error);
-    throw Error(error.response?.data?.error);
-  } finally {
-    setLoading(false);
-  }
-};
-
 export const editAppointmentStatus = async (
   appointmentId: number,
-  data: string,
+  status: string,
   setLoading: (loading: boolean) => void,
   dispatch: DispatchType
 ) => {
   setLoading(true);
   try {
+    console.log(appointmentId, status);
+
     const res = await privateRequest({
       method: "PUT",
       url: `/appointment/${appointmentId}/status`,
-      data: JSON.stringify({ data }),
+      data: JSON.stringify({ status }),
     });
     dispatch(editAppointmentData(res.data));
-    toast.success("Appointment has been updated!");
+    toast.success("Appointment status has been changed!");
   } catch (error: any) {
-    toast.error(error.response?.data?.error);
-    throw Error(error.response?.data?.error);
+    toast.error(
+      error.response?.data?.error || "Error updating appointment status"
+    );
+    throw new Error(
+      error.response?.data?.error || "Error updating appointment status"
+    );
   } finally {
     setLoading(false);
-  }
-};
-
-export const deleteAppointment = async (
-  setIsLoading: (loading: boolean) => void,
-  dispatch: DispatchType,
-  appointment_id: string | number
-) => {
-  setIsLoading(true);
-  try {
-    await privateRequest({
-      method: "DELETE",
-      url: `/appointment/${appointment_id}`,
-    });
-    dispatch(deleteAppointmentSuccess(appointment_id));
-    toast.success("Appointment has been deleted!");
-  } catch (error: any) {
-    toast.error(error.response?.data?.error);
-  } finally {
-    setIsLoading(false);
   }
 };

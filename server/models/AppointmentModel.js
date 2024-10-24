@@ -19,7 +19,7 @@ class Appointment {
     return await db.promise().query(sqlQuery);
   }
 
-  // Update appointment status (for Accept/Decline)
+  // Update appointment status (for 'Pending', 'Accepted', 'Declined', 'Cancelled')
   async updateAppointmentStatus(appointmentId, status) {
     const sqlQuery =
       "UPDATE Appointment SET Status = ? WHERE AppointmentID = ?";

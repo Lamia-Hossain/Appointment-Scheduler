@@ -22,6 +22,19 @@ const SeeAppointments = () => {
   const { auth } = useSelector((state: any) => state.auth);
   const { appointments } = useSelector((state: any) => state.appointments);
   const [usersMap, setUsersMap] = useState<{ [key: string]: string }>({});
+  const handleUpdateStatus = async (
+    appointmentId: number,
+    newStatus: string
+  ) => {
+    await editAppointmentStatus(
+      appointmentId,
+      newStatus,
+      setIsLoading,
+      dispatch
+    );
+
+    getAllAppointmentsByUserId(setIsLoading, auth.userId, dispatch);
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -54,10 +67,6 @@ const SeeAppointments = () => {
       getAllAppointmentsByUserId(setIsLoading, auth.userId, dispatch);
     }
   }, [appointments, auth.userId, dispatch]);
-
-  const handleChangeAppointmentStatus = (id: number, status: string) => {
-    editAppointmentStatus(id, status, setIsLoading, dispatch);
-  };
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
@@ -129,10 +138,7 @@ const SeeAppointments = () => {
                 <Tooltip title="Accept">
                   <CheckCircleTwoTone
                     onClick={() =>
-                      handleChangeAppointmentStatus(
-                        record.AppointmentID,
-                        "Accepted"
-                      )
+                      handleUpdateStatus(record.AppointmentID, "Accepted")
                     }
                     style={{ cursor: "pointer", marginRight: "8px" }}
                     twoToneColor="#52c41a"
@@ -141,10 +147,7 @@ const SeeAppointments = () => {
                 <Tooltip title="Decline">
                   <CloseCircleTwoTone
                     onClick={() =>
-                      handleChangeAppointmentStatus(
-                        record.AppointmentID,
-                        "Declined"
-                      )
+                      handleUpdateStatus(record.AppointmentID, "Declined")
                     }
                     style={{ cursor: "pointer" }}
                     twoToneColor="#eb2f96"
@@ -157,10 +160,7 @@ const SeeAppointments = () => {
               <Tooltip title="Cancel">
                 <StopTwoTone
                   onClick={() =>
-                    handleChangeAppointmentStatus(
-                      record.AppointmentID,
-                      "Cancelled"
-                    )
+                    handleUpdateStatus(record.AppointmentID, "Cancelled")
                   }
                   style={{ cursor: "pointer" }}
                   twoToneColor="#eb2f96"
@@ -173,7 +173,7 @@ const SeeAppointments = () => {
             <Tooltip title="Undo">
               <UndoOutlined
                 onClick={() =>
-                  handleChangeAppointmentStatus(record.AppointmentID, "Pending")
+                  handleUpdateStatus(record.AppointmentID, "Pending")
                 }
                 style={{ cursor: "pointer" }}
                 twoToneColor="#eb2f96"
@@ -192,7 +192,7 @@ const SeeAppointments = () => {
       }
       return acc;
     },
-    { Pending: 0, Accepted: 0, Declined: 0 }
+    { Pending: 0, Accepted: 0, Declined: 0, Cancelled: 0 }
   );
 
   const filteredAppointments = appointments.filter(
@@ -213,6 +213,7 @@ const SeeAppointments = () => {
           `Pending (${statusCounts.Pending})`,
           `Accepted (${statusCounts.Accepted})`,
           `Declined (${statusCounts.Declined})`,
+          `Cancelled (${statusCounts.Cancelled})`,
         ]}
         onChange={(value) => setValue(value.split(" ")[0])}
         size="large"
@@ -234,7 +235,8 @@ const SeeAppointments = () => {
             pagination={{ pageSize: 15 }}
             loading={isLoading}
             style={{ textAlign: "center" }}
-            rowClassName={rowClassName} // Apply row className based on appointment type
+            rowClassName={rowClassName}
+            className="md:px-4 overflow-auto"
           />
         </ConfigProvider>
       </div>

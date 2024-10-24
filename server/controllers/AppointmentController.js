@@ -62,15 +62,16 @@ class AppointmentController {
   async updateAppointmentStatus(req, res) {
     try {
       const appointmentId = req.params.id;
-      const { status } = req.body; // 'Accepted', 'Declined', or 'Canceled'
+      const { status } = req.body;
 
       // Validate status
-      if (!["Accepted", "Declined", "Canceled"].includes(status)) {
+      if (!["Pending", "Accepted", "Declined", "Cancelled"].includes(status)) {
         return res.status(400).json({ message: "Invalid status" });
       }
 
       // Fetch the appointment to check who scheduled it and who it is scheduled with
       const [appointment] = await Appointment.getAppointmentById(appointmentId);
+
       if (appointment.length === 0) {
         return res.status(404).json({ message: "Appointment not found" });
       }
@@ -78,27 +79,7 @@ class AppointmentController {
       const scheduledBy = appointment[0].ScheduledBy;
       const scheduledWith = appointment[0].ScheduledWith;
 
-      // Assuming you have the logged-in user ID available in req.user
-      const loggedInUserId = req.user.id; // Adjust based on how you manage user sessions
-
-      // Determine who is allowed to change the status
-      if (status === "Canceled" && loggedInUserId === scheduledBy) {
-        // Only the user who scheduled the appointment can cancel it
-        const result = await Appointment.updateAppointmentStatus(
-          appointmentId,
-          status
-        );
-        if (result[0].affectedRows === 0) {
-          return res.status(404).json({ message: "Appointment not found" });
-        }
-        return res
-          .status(200)
-          .json({ message: "Appointment status updated successfully" });
-      } else if (
-        ["Accepted", "Declined"].includes(status) &&
-        loggedInUserId === scheduledWith
-      ) {
-        // Only the scheduledWith user can accept or decline
+      if (["Accepted", "Declined", "Cancelled", "Pending"].includes(status)) {
         const result = await Appointment.updateAppointmentStatus(
           appointmentId,
           status
