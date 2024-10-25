@@ -4,7 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { getAllUsers } from "../../api/services/users.service";
 
-const UserList = () => {
+interface UserListProps {
+  onUserSelect: (user: User) => void;
+}
+
+const UserList = ({ onUserSelect }: UserListProps) => {
   const dispatch = useDispatch();
   const [isUserLoading, setIsUserLoading] = useState(false);
   const [searchText, setSearchText] = useState<string>("");
@@ -19,7 +23,7 @@ const UserList = () => {
   const filteredUsers = users[0]?.filter(
     (user: any) =>
       user?.UserID !== auth?.userId &&
-      user?.Name?.toLowerCase().includes(searchText?.toLowerCase())
+      user?.Name?.toLowerCase().includes(searchText.toLowerCase())
   );
 
   const columns = [
@@ -61,6 +65,9 @@ const UserList = () => {
         rowKey="UserID"
         pagination={false}
         className="border rounded-md w-[300px] overflow-auto max-h-[500px]"
+        onRow={(record) => ({
+          onClick: () => onUserSelect(record),
+        })}
       />
     </div>
   );

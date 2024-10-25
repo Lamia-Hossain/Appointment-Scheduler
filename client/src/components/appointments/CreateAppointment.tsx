@@ -1,18 +1,15 @@
 import { useState, useEffect } from "react";
-import { Calendar, TimePicker, Button, message, Table } from "antd";
+import { Calendar, TimePicker, Button, message } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addAppointment,
   getAllAppointmentsByUserId,
 } from "../../api/services/appointment.service";
+import UserList from "../users/UserList";
 import { User } from "../../validation/dataTypes";
 
-interface CreateAppointmentProps {
-  users: User[];
-}
-
-const CreateAppointment = ({ users }: CreateAppointmentProps) => {
+const CreateAppointment = () => {
   const today = dayjs();
   const dispatch = useDispatch();
   const appointments = useSelector(
@@ -35,14 +32,13 @@ const CreateAppointment = ({ users }: CreateAppointmentProps) => {
       return;
     }
 
-    // Convert the time to 24-hour format using dayjs
     const timeIn24HourFormat = time ? time.format("HH:mm") : undefined;
 
     const appointmentData = {
       title,
       description,
       date: date?.format("YYYY-MM-DD"),
-      time: timeIn24HourFormat, // Use the 24-hour format time
+      time: timeIn24HourFormat,
       scheduledWith: selectedUser?.UserID,
       scheduledBy: auth?.userId,
     };
@@ -62,7 +58,7 @@ const CreateAppointment = ({ users }: CreateAppointmentProps) => {
     if (appointments && Array.isArray(appointments)) {
       const uniqueDates = [
         ...new Set(
-          appointments.map((appointment) =>
+          appointments?.map((appointment) =>
             dayjs(appointment.date).format("YYYY-MM-DD")
           )
         ),
@@ -73,8 +69,13 @@ const CreateAppointment = ({ users }: CreateAppointmentProps) => {
 
   const isDateInArray = (date: Dayjs | undefined) => {
     return date
-      ? multipleDates.some((d) => dayjs(d).isSame(date, "day"))
+      ? multipleDates?.some((d) => dayjs(d).isSame(date, "day"))
       : false;
+  };
+
+  const onUserSelect = (user: User) => {
+    setSelectedUser(user);
+    message.info(`User ${user.Name} selected.`);
   };
 
   const onDateSelect = (selectedDate: Dayjs) => {
@@ -85,36 +86,9 @@ const CreateAppointment = ({ users }: CreateAppointmentProps) => {
     }
   };
 
-  const onUserSelect = (record: User) => {
-    setSelectedUser(record);
-    message.info(`User ${record.Name} selected.`);
-  };
-
-  const columns = [
-    {
-      title: "SL",
-      dataIndex: "UserID",
-      key: "index",
-      align: "center" as "center",
-      render: (index: number) => (
-        <p className="hover:cursor-pointer">{index + 1}</p>
-      ),
-    },
-    {
-      title: "Name",
-      dataIndex: "Name",
-      key: "username",
-      align: "center" as "center",
-      render: (text: any, record: User, index: number) => (
-        <p className="hover:cursor-pointer">{record.Name}</p>
-      ),
-    },
-  ];
-
   return (
     <div className="flex flex-col gap-3 items-center my-5">
       <div className="grid grid-cols-2 gap-3 md:gap-10">
-        {/* Title, Description, User Table */}
         <div className="flex flex-col gap-3 col-span-2 md:col-span-1">
           <div className="flex flex-col items-start gap-1">
             <label className="font-semibold">Title</label>
@@ -142,20 +116,10 @@ const CreateAppointment = ({ users }: CreateAppointmentProps) => {
               Schedule With:{" "}
               <span className="text-black">{selectedUser?.Name}</span>
             </p>
-            <Table
-              columns={columns}
-              dataSource={users}
-              rowKey="UserID"
-              onRow={(record) => ({
-                onClick: () => onUserSelect(record),
-              })}
-              pagination={false}
-              className="border rounded-md w-[260px] overflow-auto max-h-[267px]"
-            />
+            <UserList onUserSelect={onUserSelect} /> {/* Use UserList here */}
           </div>
         </div>
 
-        {/* Time, Date */}
         <div className="flex flex-col gap-3 col-span-2 md:col-span-1">
           <div className="flex flex-col items-start gap-1">
             <p className="font-semibold">Pick a Time</p>
