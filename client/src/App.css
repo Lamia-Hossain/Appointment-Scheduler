@@ -42,3 +42,7 @@
 .ant-menu {
   background: #d2e0fb;
 }
+
+.ant-radio-group {
+  display: none;
+}

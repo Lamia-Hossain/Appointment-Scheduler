@@ -11,7 +11,6 @@ import {
 import {
   CheckCircleTwoTone,
   CloseCircleTwoTone,
-  StopTwoTone,
   UndoOutlined,
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
@@ -166,7 +165,7 @@ const SeeAppointments = () => {
           } else {
             return (
               <Tooltip title="Cancel">
-                <StopTwoTone
+                <CloseCircleTwoTone
                   onClick={() =>
                     handleUpdateStatus(record.AppointmentID, "Cancelled")
                   }
@@ -208,14 +207,13 @@ const SeeAppointments = () => {
       (appointment?.Title?.toLowerCase().includes(searchText?.toLowerCase()) ||
         appointment?.Description?.toLowerCase().includes(
           searchText?.toLowerCase()
-        ))
+        ) ||
+        appointment?.Title?.toLowerCase().includes(searchText?.toLowerCase()))
   );
 
   const rowClassName = (record: Appointment): string => {
     return isUpcoming(record.Date, record.Time) ? "upcoming-row" : "";
   };
-
-  console.log(rowClassName);
 
   return (
     <div className="flex flex-col gap-5 mx-auto justify-center items-center">

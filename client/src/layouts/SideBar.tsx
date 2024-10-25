@@ -1,12 +1,15 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu } from "antd";
+import { Menu, Tooltip } from "antd";
 import {
   CalendarOutlined,
   UsergroupAddOutlined,
   IdcardTwoTone,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import clockCalendar from "../assets/clock-calendar.png";
+import { useSelector } from "react-redux";
+import { logout } from "../api/apiConfig";
 
 interface SidebarItem {
   key: string;
@@ -31,6 +34,8 @@ const sidebarItems: SidebarItem[] = [
 
 const SideBar = () => {
   const location = useLocation();
+  const { auth } = useSelector((state: any) => state.auth);
+
   return (
     <div className="shadow fixed left-0 top-0 bottom-0 bg-violet-50 z-50 w-[170px] hidden lg:flex lg:flex-col items-center gap-3">
       <img
@@ -49,8 +54,19 @@ const SideBar = () => {
           </Menu.Item>
         ))}
       </Menu>
-      <div className="mt-auto p-4">
-        <IdcardTwoTone style={{ cursor: "pointer" }} className="text-2xl" />
+      <div className="mt-auto p-4 flex items-center justify-between gap-3 w-[170px]">
+        <div className="flex items-center gap-3">
+          <IdcardTwoTone style={{ cursor: "pointer" }} className="text-2xl" />{" "}
+          <p>{auth?.name}</p>
+        </div>
+
+        <Tooltip title="Logout">
+          <LogoutOutlined
+            onClick={() => {
+              logout();
+            }}
+          />
+        </Tooltip>
       </div>
     </div>
   );

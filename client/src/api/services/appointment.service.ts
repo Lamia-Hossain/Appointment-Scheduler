@@ -69,7 +69,7 @@ export const addAppointment = async (
       data: appointment_data,
     });
     dispatch(addAppointmentData(res.data));
-    toast.success("New appointment has been added!");
+    // toast.success("New appointment has been added!");
   } catch (error: any) {
     toast.error(error.response?.data?.error);
     throw Error(error.response?.data?.error);

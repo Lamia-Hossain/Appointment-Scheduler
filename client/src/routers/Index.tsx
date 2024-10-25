@@ -22,7 +22,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/",
-        element: <PrivateRoute roles={["user"]} />,
+        element: <PrivateRoute />,
         children: [
           {
             path: "appointments",
@@ -34,7 +34,6 @@ const router = createBrowserRouter([
           },
         ],
       },
-
       {
         path: "*",
         element: <NotFound />,

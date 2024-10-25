@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { getAllUsers } from "../../api/services/users.service";
 
 interface UserListProps {
-  onUserSelect: (user: User) => void;
+  onUserSelect?: (user: User) => void;
 }
 
 const UserList = ({ onUserSelect }: UserListProps) => {
@@ -75,9 +75,11 @@ const UserList = ({ onUserSelect }: UserListProps) => {
             columns={columns}
             dataSource={filteredUsers}
             rowKey="UserID"
-            pagination={false}
+            pagination={{ pageSize: 5 }}
             onRow={(record) => ({
-              onClick: () => onUserSelect(record),
+              onClick: () => {
+                onUserSelect && onUserSelect(record);
+              },
             })}
           />
         </ConfigProvider>

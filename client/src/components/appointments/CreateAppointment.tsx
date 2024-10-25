@@ -31,9 +31,21 @@ const CreateAppointment = () => {
     if (!selectedUser) {
       message.warning("Please select a user.");
       return;
+    } else if (title === "") {
+      message.warning("Please enter a title.");
+      return;
     }
 
     const timeIn24HourFormat = time ? time.format("HH:mm") : undefined;
+
+    // Check if the selected date and time is in the past
+    const selectedDateTime = dayjs(
+      `${date?.format("YYYY-MM-DD")} ${timeIn24HourFormat}`
+    );
+    if (selectedDateTime.isBefore(today, "minute")) {
+      message.error("Selected date and time cannot be in the past.");
+      return;
+    }
 
     const appointmentData = {
       title,
@@ -113,15 +125,31 @@ const CreateAppointment = () => {
           </div>
 
           <div className="flex flex-col items-start gap-1">
-            <p className="font-semibold">
+            <div className="font-semibold flex items-center gap-2">
               Schedule With:{" "}
-              <span className="text-black">{selectedUser?.Name}</span>
-            </p>
-            <UserList onUserSelect={onUserSelect} /> {/* Use UserList here */}
+              <p className="text-black text-start px-1 w-52 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                {selectedUser?.Name}
+              </p>
+            </div>
+            <UserList onUserSelect={onUserSelect} />
           </div>
         </div>
 
         <div className="flex flex-col gap-3 col-span-2 md:col-span-1">
+          <div className="flex flex-col items-start gap-1">
+            <p className="font-semibold">Select a Date</p>
+            <div className="w-[305px] border border-solid p-2 rounded-md">
+              <Calendar
+                fullscreen={false}
+                onSelect={(selectedDate) => onDateSelect(selectedDate)}
+                disabledDate={(current) =>
+                  current.isBefore(today, "day") || isDateInArray(current)
+                }
+                value={date}
+              />
+            </div>
+          </div>
+
           <div className="flex flex-col items-start gap-1">
             <p className="font-semibold">Pick a Time</p>
             <TimePicker
@@ -131,18 +159,6 @@ const CreateAppointment = () => {
               style={{ width: "50%" }}
               minuteStep={15}
             />
-          </div>
-
-          <div className="flex flex-col items-start gap-1">
-            <p className="font-semibold">Select a Date</p>
-            <div className="w-[305px] border border-solid p-2 rounded-md">
-              <Calendar
-                fullscreen={false}
-                onSelect={(selectedDate) => onDateSelect(selectedDate)}
-                disabledDate={(current) => isDateInArray(current)}
-                value={date}
-              />
-            </div>
           </div>
         </div>
       </div>
