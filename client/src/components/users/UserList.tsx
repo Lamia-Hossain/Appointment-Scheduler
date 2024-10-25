@@ -18,8 +18,8 @@ const UserList = () => {
 
   const filteredUsers = users[0]?.filter(
     (user: any) =>
-      user.UserID !== auth?.userId &&
-      user.Name.toLowerCase().includes(searchText.toLowerCase())
+      user?.UserID !== auth?.userId &&
+      user?.Name?.toLowerCase().includes(searchText?.toLowerCase())
   );
 
   const columns = [

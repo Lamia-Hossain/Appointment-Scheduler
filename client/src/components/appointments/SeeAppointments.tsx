@@ -25,7 +25,7 @@ import { getUserById } from "../../api/services/users.service";
 const SeeAppointments = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [value, setValue] = useState<string>("All"); // Default to 'All' to show all appointments
+  const [value, setValue] = useState<string>("All");
   const [searchText, setSearchText] = useState<string>("");
   const { auth } = useSelector((state: any) => state.auth);
   const { appointments } = useSelector((state: any) => state.appointments);
@@ -204,10 +204,10 @@ const SeeAppointments = () => {
 
   const filteredAppointments = appointments.filter(
     (appointment: Appointment) =>
-      (value === "All" || appointment.Status === value) &&
-      (appointment.Title.toLowerCase().includes(searchText.toLowerCase()) ||
-        appointment.Description.toLowerCase().includes(
-          searchText.toLowerCase()
+      (value === "All" || appointment?.Status === value) &&
+      (appointment?.Title?.toLowerCase().includes(searchText?.toLowerCase()) ||
+        appointment?.Description?.toLowerCase().includes(
+          searchText?.toLowerCase()
         ))
   );
 

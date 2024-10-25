@@ -69,7 +69,12 @@ class UserController {
         { expiresIn: "1h" }
       );
 
-      res.status(200).json({ token, userId: user[0].UserID, expiresIn: "1h" });
+      res.status(200).json({
+        token,
+        userId: user[0].UserID,
+        name: user[0].Name,
+        expiresIn: "1h",
+      });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
