@@ -8,6 +8,7 @@ import {
 } from "../../api/services/appointment.service";
 import UserList from "../users/UserList";
 import { User } from "../../validation/dataTypes";
+import { inputFieldCSS } from "../forms/Field";
 
 const CreateAppointment = () => {
   const today = dayjs();
@@ -97,7 +98,7 @@ const CreateAppointment = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Title"
-              className="border rounded p-2 w-full"
+              className={`${inputFieldCSS}`}
             />
           </div>
 
@@ -107,7 +108,7 @@ const CreateAppointment = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Description"
-              className="border rounded p-2 w-full"
+              className={`${inputFieldCSS}`}
             />
           </div>
 

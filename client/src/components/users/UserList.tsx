@@ -1,4 +1,4 @@
-import { Table, Input } from "antd";
+import { Table, Input, ConfigProvider } from "antd";
 import { User } from "../../validation/dataTypes";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -57,18 +57,31 @@ const UserList = ({ onUserSelect }: UserListProps) => {
           style={{ width: 125 }}
         />
 
-        <p>Total: {filteredUsers.length}</p>
+        <p>Total: {filteredUsers?.length}</p>
       </div>
-      <Table
-        columns={columns}
-        dataSource={filteredUsers}
-        rowKey="UserID"
-        pagination={false}
-        className="border rounded-md w-[300px] overflow-auto max-h-[500px]"
-        onRow={(record) => ({
-          onClick: () => onUserSelect(record),
-        })}
-      />
+      <div className="w-[305px]">
+        <ConfigProvider
+          theme={{
+            components: {
+              Table: {
+                headerBg: "#9974ad",
+                headerColor: "white",
+                colorText: "#3C3D37",
+              },
+            },
+          }}
+        >
+          <Table
+            columns={columns}
+            dataSource={filteredUsers}
+            rowKey="UserID"
+            pagination={false}
+            onRow={(record) => ({
+              onClick: () => onUserSelect(record),
+            })}
+          />
+        </ConfigProvider>
+      </div>
     </div>
   );
 };

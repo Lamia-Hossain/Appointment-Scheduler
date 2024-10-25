@@ -65,13 +65,13 @@ const SeeAppointments = () => {
       setUsersMap(mappedUsers);
     };
 
-    if (appointments.length) {
+    if (appointments?.length) {
       fetchUsers();
     }
   }, [appointments]);
 
   useEffect(() => {
-    if (!appointments.length) {
+    if (!appointments?.length) {
       getAllAppointmentsByUserId(setIsLoading, auth.userId, dispatch);
     }
   }, [appointments, auth.userId, dispatch]);
@@ -215,6 +215,8 @@ const SeeAppointments = () => {
     return isUpcoming(record.Date, record.Time) ? "upcoming-row" : "";
   };
 
+  console.log(rowClassName);
+
   return (
     <div className="flex flex-col gap-5 mx-auto justify-center items-center">
       <p className="text-2xl text-center font-semibold text-black">
@@ -222,11 +224,11 @@ const SeeAppointments = () => {
       </p>
       <Segmented
         options={[
-          `All (${appointments.length})`,
-          `Pending (${statusCounts.Pending})`,
-          `Accepted (${statusCounts.Accepted})`,
-          `Declined (${statusCounts.Declined})`,
-          `Cancelled (${statusCounts.Cancelled})`,
+          `All (${appointments?.length})`,
+          `Pending (${statusCounts?.Pending})`,
+          `Accepted (${statusCounts?.Accepted})`,
+          `Declined (${statusCounts?.Declined})`,
+          `Cancelled (${statusCounts?.Cancelled})`,
         ]}
         onChange={(value) => setValue(value.split(" ")[0])}
         size="large"
@@ -244,6 +246,7 @@ const SeeAppointments = () => {
               Table: {
                 headerBg: "#9974ad",
                 headerColor: "white",
+                colorText: "#3C3D37",
               },
             },
           }}
