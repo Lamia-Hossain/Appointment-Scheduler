@@ -20,11 +20,6 @@ export const privateRequest = axios.create({
   headers,
 });
 
-/**
- * configure privateRequest to include token in the header
- * if token is not present in the localStorage or token is expired
- * then logout the user and remove the token from the localStorage
- */
 privateRequest.interceptors.request.use((config) => {
   // get token from localStorage
   const TOKEN = localStorage.getItem("termin");
@@ -33,7 +28,7 @@ privateRequest.interceptors.request.use((config) => {
   // then logout the user and remove the token from the localStorage
   if (!TOKEN) {
     logout();
-    return config; // Exit the interceptor early
+    return config;
   }
 
   // get current date

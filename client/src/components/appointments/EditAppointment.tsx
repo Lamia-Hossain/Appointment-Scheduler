@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button, Calendar, TimePicker, Input, message } from "antd";
+import { Button, Calendar, TimePicker, message } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 import { Appointment } from "../../validation/dataTypes";
 import {
@@ -71,7 +71,7 @@ const EditAppointment = ({ prev_appointment }: PrevAppointmentProps) => {
         setIsLoading,
         dispatch
       );
-      message.success("Appointment updated successfully!");
+      // message.success("Appointment updated successfully!");
       fetchAppointments();
     } catch (error) {
       message.error("Failed to update appointment.");

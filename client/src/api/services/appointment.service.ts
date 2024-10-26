@@ -7,7 +7,7 @@ import {
 } from "../../store/features/appointmentsSlice";
 import privateRequest from "../apiConfig";
 
-// Define the AppointmentData interface
+// AppointmentData interface
 interface AppointmentData {
   title: string;
   description: string;
@@ -115,28 +115,6 @@ export const editAppointmentStatus = async (
     );
   } finally {
     setLoading(false);
-  }
-};
-
-// Fetch an appointment by ID
-export const getAppointmentById = async (
-  appointmentId: string,
-  setIsLoading: (loading: boolean) => void,
-  dispatch: DispatchType
-) => {
-  setIsLoading(true);
-  try {
-    const res = await privateRequest({
-      method: "GET",
-      url: `/appointment/${appointmentId}`,
-    });
-
-    dispatch(getAppointments(res.data));
-    console.log("Fetched appointment:", res.data);
-  } catch (error: any) {
-    toast.error(error.response?.data?.message || "Error fetching appointment");
-  } finally {
-    setIsLoading(false);
   }
 };
 

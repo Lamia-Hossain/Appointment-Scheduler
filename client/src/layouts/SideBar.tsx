@@ -1,15 +1,9 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, Tooltip } from "antd";
-import {
-  CalendarOutlined,
-  UsergroupAddOutlined,
-  IdcardTwoTone,
-  LogoutOutlined,
-} from "@ant-design/icons";
+import { Menu } from "antd";
+import { CalendarOutlined, UsergroupAddOutlined } from "@ant-design/icons";
 import clockCalendar from "../assets/clock-calendar.png";
 import { useSelector } from "react-redux";
-import { logout } from "../api/apiConfig";
 import UserInfo from "./UserInfo";
 
 interface SidebarItem {
@@ -35,7 +29,6 @@ const sidebarItems: SidebarItem[] = [
 
 const SideBar = () => {
   const location = useLocation();
-  const { auth } = useSelector((state: any) => state.auth);
 
   return (
     <div className="shadow fixed left-0 top-0 bottom-0 bg-violet-50 z-50 w-[170px] hidden lg:flex lg:flex-col items-center gap-3">

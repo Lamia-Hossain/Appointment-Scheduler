@@ -3,9 +3,9 @@ import { CloseOutlined } from "@ant-design/icons";
 import { Slide } from "react-awesome-reveal";
 
 interface GeneralModalProps {
-  children: ReactNode; // Children can be any valid React node
-  onClose: () => void; // Function to handle closing the modal
-  title: string; // Title of the modal
+  children: ReactNode;
+  onClose: () => void;
+  title: string;
 }
 
 const GeneralModal: React.FC<GeneralModalProps> = ({
