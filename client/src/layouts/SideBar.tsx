@@ -10,6 +10,7 @@ import {
 import clockCalendar from "../assets/clock-calendar.png";
 import { useSelector } from "react-redux";
 import { logout } from "../api/apiConfig";
+import UserInfo from "./UserInfo";
 
 interface SidebarItem {
   key: string;
@@ -55,18 +56,7 @@ const SideBar = () => {
         ))}
       </Menu>
       <div className="mt-auto p-4 flex items-center justify-between gap-3 w-[170px]">
-        <div className="flex items-center gap-3">
-          <IdcardTwoTone style={{ cursor: "pointer" }} className="text-2xl" />{" "}
-          <p>{auth?.name}</p>
-        </div>
-
-        <Tooltip title="Logout">
-          <LogoutOutlined
-            onClick={() => {
-              logout();
-            }}
-          />
-        </Tooltip>
+        <UserInfo />
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import UserInfo from "./UserInfo";
 
 const TopBar = () => {
   const location = useLocation();
@@ -16,7 +17,7 @@ const TopBar = () => {
 
       <div className="text-lg font-semibold fixed lg:hidden grid grid-cols-12 items-center top-0 right-0 left-0 bg-white text-black shadow z-40">
         <Link
-          className={`col-span-6 p-1 md:p-3 ${
+          className={`col-span-4 p-1 md:p-3 ${
             location.pathname === "/appointments" && "bg-blue-50"
           }`}
           to="/appointments"
@@ -24,13 +25,16 @@ const TopBar = () => {
           Appointments
         </Link>
         <Link
-          className={`col-span-6 p-1 md:p-3 ${
+          className={`col-span-4 p-1 md:p-3 border-x-2 ${
             location.pathname === "/users" && "bg-blue-50"
           }`}
           to="/users"
         >
           Users
         </Link>
+        <div className="col-span-4 flex justify-end gap-3 p-1 md:p-3">
+          <UserInfo />
+        </div>
       </div>
     </>
   );
