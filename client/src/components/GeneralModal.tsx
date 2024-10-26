@@ -14,18 +14,15 @@ const GeneralModal: React.FC<GeneralModalProps> = ({
   title,
 }) => {
   return (
-    <div className="z-[9999] fixed inset-0 flex items-center justify-center w-3/4 mx-auto">
-      <div
-        className="bg-black bg-opacity-50 fixed iAVnset-0"
-        onClick={onClose}
-      />
+    <div className="z-50 fixed inset-0 flex items-center justify-center w-3/4 mx-auto">
+      <div className="bg-black bg-opacity-50 fixed inset-0" onClick={onClose} />
       <Slide direction="up" duration={500}>
-        <div className="bg-white rounded-md z-20 p-4 flex flex-col gap-4">
+        <div className="bg-white text-black rounded-md shadow-md z-20 p-4 flex flex-col gap-4">
           <div className="flex items-center gap-5 justify-between">
-            <p className="text-2xl text-[#255957] font-bold">{title}</p>
+            <p className="text-2xl text-[#9974ad] font-bold">{title}</p>
             <CloseOutlined
               onClick={onClose}
-              className={`hover:cursor-pointer hover:bg-[#255957] w-8 h-8 hover:text-white rounded-full p-[1px]`}
+              className={`hover:cursor-pointer hover:bg-[#9974ad] hover:text-white rounded-full p-1`}
             />
           </div>
           {children}

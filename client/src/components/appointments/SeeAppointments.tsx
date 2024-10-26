@@ -21,15 +21,21 @@ import {
 } from "../../api/services/appointment.service";
 import { Appointment } from "../../validation/dataTypes";
 import { getUserById } from "../../api/services/users.service";
+import GeneralModal from "../GeneralModal";
+import EditAppointment from "./EditAppointment";
 
 const SeeAppointments = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment>();
+  const [modal, setModal] = useState(false);
   const [value, setValue] = useState<string>("All");
   const [searchText, setSearchText] = useState<string>("");
   const { auth } = useSelector((state: any) => state.auth);
   const { appointments } = useSelector((state: any) => state.appointments);
   const [usersMap, setUsersMap] = useState<{ [key: string]: string }>({});
+
+  const toggleModal = () => setModal(!modal);
 
   const handleUpdateStatus = async (
     appointmentId: number,
@@ -176,7 +182,10 @@ const SeeAppointments = () => {
               <div className="flex gap-2 justify-center">
                 <Tooltip title="Edit">
                   <EditTwoTone
-                    onClick={() => {}}
+                    onClick={() => {
+                      setSelectedAppointment(record);
+                      toggleModal();
+                    }}
                     className="cursor-pointer"
                     twoToneColor="#44bbe3"
                   />
@@ -234,52 +243,66 @@ const SeeAppointments = () => {
   };
 
   return (
-    <div className="flex flex-col gap-5 mx-auto justify-center items-center">
-      <p className="text-2xl text-center font-semibold text-black">
-        Status Of Your Appointments
-      </p>
-      <Segmented
-        options={[
-          `All (${appointments?.length})`,
-          `Pending (${statusCounts?.Pending})`,
-          `Accepted (${statusCounts?.Accepted})`,
-          `Declined (${statusCounts?.Declined})`,
-          `Cancelled (${statusCounts?.Cancelled})`,
-        ]}
-        onChange={(value) => setValue(value.split(" ")[0])}
-        size="large"
-      />
-      <Input
-        placeholder="Search by title or description"
-        value={searchText}
-        onChange={(e) => setSearchText(e.target.value)}
-        style={{ marginTop: 10, width: 250 }}
-      />
-      <div className="w-full lg:w-[90%] my-6">
-        <ConfigProvider
-          theme={{
-            components: {
-              Table: {
-                headerBg: "#9974ad",
-                headerColor: "white",
-                colorText: "#3C3D37",
+    <>
+      <div className="flex flex-col gap-5 mx-auto justify-center items-center">
+        <p className="text-2xl text-center font-semibold text-black">
+          Status Of Your Appointments
+        </p>
+        <Segmented
+          options={[
+            `All (${appointments?.length})`,
+            `Pending (${statusCounts?.Pending})`,
+            `Accepted (${statusCounts?.Accepted})`,
+            `Declined (${statusCounts?.Declined})`,
+            `Cancelled (${statusCounts?.Cancelled})`,
+          ]}
+          onChange={(value) => setValue(value.split(" ")[0])}
+          sizes="medium"
+        />
+        <Input
+          placeholder="Search by title or description"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          style={{ marginTop: 10, width: 250 }}
+        />
+        <div className="overflow-x-auto md:w-[90%] my-3">
+          <ConfigProvider
+            theme={{
+              components: {
+                Table: {
+                  headerBg: "#9974ad",
+                  headerColor: "white",
+                  colorText: "#3C3D37",
+                },
               },
-            },
+            }}
+          >
+            <Table
+              columns={columns}
+              dataSource={filteredAppointments}
+              bordered
+              pagination={{
+                pageSize: 5,
+                position: ["bottomCenter"],
+              }}
+              rowClassName={rowClassName}
+            />
+          </ConfigProvider>
+        </div>
+      </div>
+
+      {modal && selectedAppointment && (
+        <GeneralModal
+          title="Edit Your Appointment"
+          onClose={() => {
+            toggleModal();
+            setSelectedAppointment(undefined);
           }}
         >
-          <Table
-            columns={columns}
-            dataSource={filteredAppointments}
-            bordered
-            pagination={{
-              pageSize: 5,
-              position: ["bottomCenter"],
-            }}
-            rowClassName={rowClassName}
-          />
-        </ConfigProvider>
-      </div>
-    </div>
+          <EditAppointment prev_appointment={selectedAppointment} />
+        </GeneralModal>
+      )}
+    </>
   );
 };
 

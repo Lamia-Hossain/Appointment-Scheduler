@@ -99,13 +99,26 @@ class AppointmentController {
 
   // Update appointment details
   async updateAppointment(req, res) {
-    const { appointmentId } = req.params; // Assuming you're passing the ID in the URL
-    const updatedData = req.body; // Get the updated data from the request body
+    const { appointmentId } = req.params;
+    const updatedData = req.body;
+
+    // Ensure required fields are present
+    const { title, description, date, time, scheduledWith } = updatedData;
+    if (!title || !description || !date || !time || !scheduledWith) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
 
     try {
+      // Call update method with correctly named fields
       const [result] = await Appointment.updateAppointmentDetails(
         appointmentId,
-        updatedData
+        {
+          Title: title,
+          Description: description,
+          Date: date,
+          Time: time,
+          ScheduledWith: scheduledWith,
+        }
       );
 
       if (result.affectedRows === 0) {

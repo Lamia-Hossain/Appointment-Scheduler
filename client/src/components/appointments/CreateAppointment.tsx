@@ -9,7 +9,6 @@ import {
 import UserList from "../users/UserList";
 import { User } from "../../validation/dataTypes";
 import { inputFieldCSS } from "../forms/Field";
-import AudioRecorder from "../AudioRecorder";
 
 const CreateAppointment = () => {
   const today = dayjs();
@@ -102,9 +101,9 @@ const CreateAppointment = () => {
     }
   };
 
-  const handleAudioRecorded = (base64Audio: string) => {
-    setAudioMessage(base64Audio);
-  };
+  // const handleAudioRecorded = (base64Audio: string) => {
+  //   setAudioMessage(base64Audio);
+  // };
 
   return (
     <div className="flex flex-col gap-3 items-center my-5">

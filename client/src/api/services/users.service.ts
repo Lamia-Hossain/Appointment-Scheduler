@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { getUserByUserId, getUsers } from "../../store/features/usersSlice";
+import { getUsers } from "../../store/features/usersSlice";
 import privateRequest from "../apiConfig";
 import { toast } from "react-toastify";
 

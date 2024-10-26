@@ -16,7 +16,6 @@ interface AppointmentData {
   date: string | undefined;
   scheduledBy: number;
   status?: string;
-  audioMessage?: string | null;
   [key: string]: any;
 }
 
@@ -139,4 +138,33 @@ export const getAppointmentById = async (
   } finally {
     setIsLoading(false);
   }
+};
+
+export const editAppointment = async (
+  appointmentId: string,
+  data: AppointmentData,
+  setLoading: (loading: boolean) => void,
+  dispatch: DispatchType
+) => {
+  setLoading(true);
+  console.log(data);
+
+  await privateRequest({
+    method: "PUT",
+    url: `/appointment/${appointmentId}`,
+    data: data,
+  })
+    .then((res) => {
+      console.log(res);
+
+      dispatch(editAppointmentData(res.data));
+      toast.success("Your Appointment has been updated!");
+    })
+    .catch((error) => {
+      toast.error(error.response?.data?.message);
+      throw Error(error.response?.data?.message);
+    })
+    .finally(() => {
+      setLoading(false);
+    });
 };

@@ -32,7 +32,10 @@ class Appointment {
       UPDATE Appointment 
       SET Title = ?, Description = ?, Date = ?, Time = ?, ScheduledWith = ?
       WHERE AppointmentID = ?`;
+
+    // Destructure fields using exact keys
     const { Title, Description, Date, Time, ScheduledWith } = updatedData;
+
     return await db
       .promise()
       .query(sqlQuery, [

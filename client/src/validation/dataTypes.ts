@@ -17,5 +17,5 @@ export type Appointment = {
   ScheduledBy: number;
   ScheduledWith: number;
   Status: string;
-  AudioMessage: { data: number[] } | null;
+  AudioMessage?: { data: number[] } | null;
 };
