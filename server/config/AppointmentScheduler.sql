@@ -18,7 +18,7 @@ CREATE TABLE Appointment (
     Time TIME NOT NULL,
     ScheduledBy INT NOT NULL,  -- the user who schedules the appointment
     ScheduledWith INT NOT NULL, -- the user with whom the appointment is scheduled
-    Status ENUM('Pending', 'Accepted', 'Declined', 'Cancelled') DEFAULT 'Pending', -- to handle accept/decline
+    Status ENUM('Pending', 'Accepted', 'Declined', 'Cancelled') DEFAULT 'Pending', -- to handle accept/decline/cancel/pending
     AudioMessage BLOB, -- optional audio message
 
     FOREIGN KEY (ScheduledBy) REFERENCES User(UserID),
