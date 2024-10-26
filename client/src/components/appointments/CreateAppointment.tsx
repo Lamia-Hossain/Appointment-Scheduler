@@ -9,6 +9,7 @@ import {
 import UserList from "../users/UserList";
 import { User } from "../../validation/dataTypes";
 import { inputFieldCSS } from "../forms/Field";
+import AudioRecorder from "../AudioRecorder";
 
 const CreateAppointment = () => {
   const today = dayjs();
@@ -25,6 +26,8 @@ const CreateAppointment = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [buttonText, setButtonText] = useState("Create Appointment");
   const [multipleDates, setMultipleDates] = useState<string[]>([]);
+  const [audioFile, setAudioFile] = useState<File | null>(null);
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const createAppointment = async () => {
@@ -54,6 +57,7 @@ const CreateAppointment = () => {
       time: timeIn24HourFormat,
       scheduledWith: selectedUser?.UserID,
       scheduledBy: auth?.userId,
+      audioMessage: audioFile,
     };
 
     try {
@@ -98,6 +102,8 @@ const CreateAppointment = () => {
       message.warning("This date already has an appointment.");
     }
   };
+
+  const handleAudioRecorded = (file: File) => setAudioFile(file);
 
   return (
     <div className="flex flex-col gap-3 items-center my-5">
@@ -160,6 +166,8 @@ const CreateAppointment = () => {
               minuteStep={15}
             />
           </div>
+
+          <AudioRecorder onAudioRecorded={handleAudioRecorded} />
         </div>
       </div>
 

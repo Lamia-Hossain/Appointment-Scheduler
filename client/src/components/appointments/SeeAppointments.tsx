@@ -20,6 +20,7 @@ import {
 } from "../../api/services/appointment.service";
 import { Appointment } from "../../validation/dataTypes";
 import { getUserById } from "../../api/services/users.service";
+// import { Buffer } from 'buffer';
 
 const SeeAppointments = () => {
   const dispatch = useDispatch();
@@ -111,6 +112,28 @@ const SeeAppointments = () => {
       dataIndex: "Description",
       key: "Description",
       align: "center",
+    },
+    {
+      title: "Audio Message",
+      key: "audio",
+      align: "center",
+      render: (record: Appointment) => {
+        if (record.AudioMessage && record.AudioMessage.data) {
+          try {
+            const audioBlob = new Blob(
+              [new Uint8Array(record.AudioMessage.data)],
+              { type: "audio/mp3" }
+            );
+            const audioUrl = URL.createObjectURL(audioBlob);
+            return <audio controls src={audioUrl} />;
+          } catch (error) {
+            console.error("Error creating audio blob:", error);
+            return "Error playing audio";
+          }
+        }
+
+        return "No Audio"; // Return this if AudioMessage is null or data is undefined
+      },
     },
     {
       title: "Date",

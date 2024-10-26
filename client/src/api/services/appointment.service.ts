@@ -7,6 +7,7 @@ import {
 } from "../../store/features/appointmentsSlice";
 import privateRequest from "../apiConfig";
 
+// Define the AppointmentData interface
 interface AppointmentData {
   title: string;
   description: string;
@@ -15,10 +16,13 @@ interface AppointmentData {
   date: string | undefined;
   scheduledBy: number;
   status?: string;
+  audioMessage?: File | null;
+  [key: string]: any;
 }
 
 type DispatchType = (action: any) => void;
 
+// Fetch all appointments
 export const getAllAppointments = async (
   setIsLoading: (loading: boolean) => void,
   dispatch: DispatchType
@@ -37,6 +41,7 @@ export const getAllAppointments = async (
   }
 };
 
+// Fetch appointments by user ID
 export const getAllAppointmentsByUserId = async (
   setIsLoading: (loading: boolean) => void,
   userId: string,
@@ -56,6 +61,7 @@ export const getAllAppointmentsByUserId = async (
   }
 };
 
+// Add a new appointment
 export const addAppointment = async (
   appointment_data: AppointmentData,
   setLoading: (loading: boolean) => void,
@@ -63,13 +69,21 @@ export const addAppointment = async (
 ) => {
   setLoading(true);
   try {
+    const formData = new FormData();
+
+    Object.keys(appointment_data).forEach((key) => {
+      formData.append(key as string, appointment_data[key]);
+    });
+
     const res = await privateRequest({
       method: "POST",
       url: "/appointment",
-      data: appointment_data,
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     });
     dispatch(addAppointmentData(res.data));
-    // toast.success("New appointment has been added!");
   } catch (error: any) {
     toast.error(error.response?.data?.error);
     throw Error(error.response?.data?.error);
@@ -78,6 +92,7 @@ export const addAppointment = async (
   }
 };
 
+// Edit the status of an appointment
 export const editAppointmentStatus = async (
   appointmentId: number,
   status: string,

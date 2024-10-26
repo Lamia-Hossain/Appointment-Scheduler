@@ -7,6 +7,11 @@ class AppointmentController {
     try {
       const appointmentData = req.body;
 
+      // const audioMessage = req.file ? req.file.path : null;
+      // if (audioMessage) {
+      //   appointmentData.audioMessage = audioMessage; // Store the path or filename
+      // }
+
       // Convert the time to 24-hour format
       const timeIn24HourFormat = moment(appointmentData.time, "hh:mm A").format(
         "HH:mm"
