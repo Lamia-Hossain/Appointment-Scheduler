@@ -16,7 +16,7 @@ interface AppointmentData {
   date: string | undefined;
   scheduledBy: number;
   status?: string;
-  audioMessage?: File | null;
+  audioMessage?: string | null;
   [key: string]: any;
 }
 
@@ -74,7 +74,6 @@ export const addAppointment = async (
     Object.keys(appointment_data).forEach((key) => {
       formData.append(key as string, appointment_data[key]);
     });
-
     const res = await privateRequest({
       method: "POST",
       url: "/appointment",
@@ -117,5 +116,27 @@ export const editAppointmentStatus = async (
     );
   } finally {
     setLoading(false);
+  }
+};
+
+// Fetch an appointment by ID
+export const getAppointmentById = async (
+  appointmentId: string,
+  setIsLoading: (loading: boolean) => void,
+  dispatch: DispatchType
+) => {
+  setIsLoading(true);
+  try {
+    const res = await privateRequest({
+      method: "GET",
+      url: `/appointment/${appointmentId}`,
+    });
+
+    dispatch(getAppointments(res.data));
+    console.log("Fetched appointment:", res.data);
+  } catch (error: any) {
+    toast.error(error.response?.data?.message || "Error fetching appointment");
+  } finally {
+    setIsLoading(false);
   }
 };

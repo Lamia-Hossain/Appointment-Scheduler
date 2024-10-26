@@ -7,10 +7,7 @@ class AppointmentController {
     try {
       const appointmentData = req.body;
 
-      // const audioMessage = req.file ? req.file.path : null;
-      // if (audioMessage) {
-      //   appointmentData.audioMessage = audioMessage; // Store the path or filename
-      // }
+      appointmentData.status = "Pending";
 
       // Convert the time to 24-hour format
       const timeIn24HourFormat = moment(appointmentData.time, "hh:mm A").format(
@@ -21,7 +18,6 @@ class AppointmentController {
       // Create the appointment in the database
       const result = await Appointment.createAppointment(appointmentData);
 
-      // Fetch the newly created appointment using the inserted ID
       const appointmentId = result[0].insertId;
       const newAppointment = await Appointment.getAppointmentById(
         appointmentId

@@ -26,8 +26,7 @@ const CreateAppointment = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [buttonText, setButtonText] = useState("Create Appointment");
   const [multipleDates, setMultipleDates] = useState<string[]>([]);
-  const [audioFile, setAudioFile] = useState<File | null>(null);
-
+  const [audioMessage, setAudioMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const createAppointment = async () => {
@@ -57,7 +56,7 @@ const CreateAppointment = () => {
       time: timeIn24HourFormat,
       scheduledWith: selectedUser?.UserID,
       scheduledBy: auth?.userId,
-      audioMessage: audioFile,
+      audioMessage,
     };
 
     try {
@@ -103,7 +102,9 @@ const CreateAppointment = () => {
     }
   };
 
-  const handleAudioRecorded = (file: File) => setAudioFile(file);
+  const handleAudioRecorded = (base64Audio: string) => {
+    setAudioMessage(base64Audio);
+  };
 
   return (
     <div className="flex flex-col gap-3 items-center my-5">
@@ -167,7 +168,11 @@ const CreateAppointment = () => {
             />
           </div>
 
-          <AudioRecorder onAudioRecorded={handleAudioRecorded} />
+          {/* Audio Recorder Section */}
+          {/* <div className="flex flex-col items-start gap-1">
+            <p className="font-semibold">Record an Audio Message</p>
+            <AudioRecorder onAudioRecorded={handleAudioRecorded} />
+          </div> */}
         </div>
       </div>
 

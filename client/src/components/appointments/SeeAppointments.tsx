@@ -12,6 +12,7 @@ import {
   CheckCircleTwoTone,
   CloseCircleTwoTone,
   UndoOutlined,
+  EditTwoTone,
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -20,7 +21,6 @@ import {
 } from "../../api/services/appointment.service";
 import { Appointment } from "../../validation/dataTypes";
 import { getUserById } from "../../api/services/users.service";
-// import { Buffer } from 'buffer';
 
 const SeeAppointments = () => {
   const dispatch = useDispatch();
@@ -41,15 +41,23 @@ const SeeAppointments = () => {
       setIsLoading,
       dispatch
     );
-    getAllAppointmentsByUserId(setIsLoading, auth.userId, dispatch);
+    fetchAppointments();
   };
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const userPromises = appointments.map(
-        (appointment: { ScheduledWith: string | number }) =>
-          getUserById(appointment.ScheduledWith)
-      );
+  const fetchAppointments = async () => {
+    setIsLoading(true);
+    await getAllAppointmentsByUserId(setIsLoading, auth.userId, dispatch);
+  };
+
+  const fetchUsers = async () => {
+    if (!appointments?.length) return;
+
+    const userPromises = appointments.map(
+      (appointment: { ScheduledWith: string | number }) =>
+        getUserById(appointment.ScheduledWith)
+    );
+
+    try {
       const users = await Promise.all(userPromises);
       const mappedUsers = appointments.reduce(
         (
@@ -63,18 +71,18 @@ const SeeAppointments = () => {
         {}
       );
       setUsersMap(mappedUsers);
-    };
-
-    if (appointments?.length) {
-      fetchUsers();
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
     }
-  }, [appointments]);
+  };
 
   useEffect(() => {
-    if (!appointments?.length) {
-      getAllAppointmentsByUserId(setIsLoading, auth.userId, dispatch);
-    }
-  }, [appointments, auth.userId, dispatch]);
+    fetchAppointments();
+  }, [auth.userId, dispatch]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [appointments]);
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
@@ -114,28 +122,6 @@ const SeeAppointments = () => {
       align: "center",
     },
     {
-      title: "Audio Message",
-      key: "audio",
-      align: "center",
-      render: (record: Appointment) => {
-        if (record.AudioMessage && record.AudioMessage.data) {
-          try {
-            const audioBlob = new Blob(
-              [new Uint8Array(record.AudioMessage.data)],
-              { type: "audio/mp3" }
-            );
-            const audioUrl = URL.createObjectURL(audioBlob);
-            return <audio controls src={audioUrl} />;
-          } catch (error) {
-            console.error("Error creating audio blob:", error);
-            return "Error playing audio";
-          }
-        }
-
-        return "No Audio"; // Return this if AudioMessage is null or data is undefined
-      },
-    },
-    {
       title: "Date",
       dataIndex: "Date",
       key: "Date",
@@ -164,13 +150,13 @@ const SeeAppointments = () => {
         if (record.Status === "Pending") {
           if (record.ScheduledWith === auth.userId) {
             return (
-              <div>
+              <div className="flex gap-2 justify-center">
                 <Tooltip title="Accept">
                   <CheckCircleTwoTone
                     onClick={() =>
                       handleUpdateStatus(record.AppointmentID, "Accepted")
                     }
-                    style={{ cursor: "pointer", marginRight: "8px" }}
+                    className="cursor-pointer"
                     twoToneColor="#52c41a"
                   />
                 </Tooltip>
@@ -179,7 +165,7 @@ const SeeAppointments = () => {
                     onClick={() =>
                       handleUpdateStatus(record.AppointmentID, "Declined")
                     }
-                    style={{ cursor: "pointer" }}
+                    className="cursor-pointer"
                     twoToneColor="#eb2f96"
                   />
                 </Tooltip>
@@ -187,15 +173,24 @@ const SeeAppointments = () => {
             );
           } else {
             return (
-              <Tooltip title="Cancel">
-                <CloseCircleTwoTone
-                  onClick={() =>
-                    handleUpdateStatus(record.AppointmentID, "Cancelled")
-                  }
-                  style={{ cursor: "pointer" }}
-                  twoToneColor="#eb2f96"
-                />
-              </Tooltip>
+              <div className="flex gap-2 justify-center">
+                <Tooltip title="Edit">
+                  <EditTwoTone
+                    onClick={() => {}}
+                    className="cursor-pointer"
+                    twoToneColor="#44bbe3"
+                  />
+                </Tooltip>
+                <Tooltip title="Cancel">
+                  <CloseCircleTwoTone
+                    onClick={() =>
+                      handleUpdateStatus(record.AppointmentID, "Cancelled")
+                    }
+                    className="cursor-pointer"
+                    twoToneColor="#eb2f96"
+                  />
+                </Tooltip>
+              </div>
             );
           }
         } else {
@@ -275,11 +270,12 @@ const SeeAppointments = () => {
           <Table
             columns={columns}
             dataSource={filteredAppointments}
-            pagination={{ pageSize: 15 }}
-            loading={isLoading}
-            style={{ textAlign: "center" }}
+            bordered
+            pagination={{
+              pageSize: 5,
+              position: ["bottomCenter"],
+            }}
             rowClassName={rowClassName}
-            className="md:px-4 overflow-auto"
           />
         </ConfigProvider>
       </div>

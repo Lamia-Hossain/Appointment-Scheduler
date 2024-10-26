@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { Button, message } from "antd";
 
 interface AudioRecorderProps {
-  onAudioRecorded: (file: File) => void;
+  onAudioRecorded: (base64Audio: string) => void;
 }
 
 const AudioRecorder: React.FC<AudioRecorderProps> = ({ onAudioRecorded }) => {
@@ -22,15 +22,19 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onAudioRecorded }) => {
         audioChunksRef.current.push(event.data);
       };
 
-      mediaRecorder.onstop = () => {
+      mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(audioChunksRef.current, {
           type: "audio/mp3",
         });
-        const audioFile = new File([audioBlob], "audioMessage.mp3", {
-          type: "audio/mp3",
-        });
-        setAudioUrl(URL.createObjectURL(audioBlob)); // For playback
-        onAudioRecorded(audioFile); // Send file to parent component
+
+        // Convert Blob to base64
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = () => {
+          const base64Audio = reader.result as string;
+          setAudioUrl(base64Audio);
+          onAudioRecorded(base64Audio);
+        };
       };
 
       mediaRecorder.start();
@@ -48,7 +52,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onAudioRecorded }) => {
   };
 
   return (
-    <div className="flex flex-col items-start gap-2">
+    <div className="flex items-start gap-2">
       <Button onClick={startRecording} disabled={isRecording}>
         Start Recording
       </Button>

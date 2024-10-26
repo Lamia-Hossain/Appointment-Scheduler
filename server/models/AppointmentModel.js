@@ -55,7 +55,7 @@ class Appointment {
   async getAppointmentsByUserId(userId) {
     const sqlQuery = `
       SELECT * FROM Appointment
-      WHERE ScheduledBy = ? OR ScheduledWith = ?`;
+      WHERE ScheduledBy = ? OR ScheduledWith = ? ORDER BY date DESC, time DESC`;
     return await db.promise().query(sqlQuery, [userId, userId]);
   }
 
