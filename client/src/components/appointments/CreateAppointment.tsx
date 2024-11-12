@@ -25,7 +25,7 @@ const CreateAppointment = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [buttonText, setButtonText] = useState("Create Appointment");
   const [multipleDates, setMultipleDates] = useState<string[]>([]);
-  const [audioMessage, setAudioMessage] = useState<string | null>(null);
+  // const [audioMessage, setAudioMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const createAppointment = async () => {
@@ -55,7 +55,7 @@ const CreateAppointment = () => {
       time: timeIn24HourFormat,
       scheduledWith: selectedUser?.UserID,
       scheduledBy: auth?.userId,
-      audioMessage,
+      // audioMessage,
     };
 
     try {

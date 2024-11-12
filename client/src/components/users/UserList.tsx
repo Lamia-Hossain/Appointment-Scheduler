@@ -3,6 +3,7 @@ import { User } from "../../validation/dataTypes";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { getAllUsers } from "../../api/services/users.service";
+import { Spin } from "antd";
 
 interface UserListProps {
   onUserSelect?: (user: User) => void;
@@ -41,7 +42,7 @@ const UserList = ({ onUserSelect }: UserListProps) => {
       dataIndex: "Name",
       key: "username",
       align: "center" as "center",
-      render: (text: any, record: User, index: number) => (
+      render: (_text: any, record: User, _index: number) => (
         <p className="hover:cursor-pointer">{record.Name}</p>
       ),
     },
@@ -60,29 +61,33 @@ const UserList = ({ onUserSelect }: UserListProps) => {
         <p>Total: {filteredUsers?.length}</p>
       </div>
       <div className="w-[305px]">
-        <ConfigProvider
-          theme={{
-            components: {
-              Table: {
-                headerBg: "#9974ad",
-                headerColor: "white",
-                colorText: "#3C3D37",
+        {isUserLoading ? (
+          <Spin />
+        ) : (
+          <ConfigProvider
+            theme={{
+              components: {
+                Table: {
+                  headerBg: "#9974ad",
+                  headerColor: "white",
+                  colorText: "#3C3D37",
+                },
               },
-            },
-          }}
-        >
-          <Table
-            columns={columns}
-            dataSource={filteredUsers}
-            rowKey="UserID"
-            pagination={{ pageSize: 5 }}
-            onRow={(record) => ({
-              onClick: () => {
-                onUserSelect && onUserSelect(record);
-              },
-            })}
-          />
-        </ConfigProvider>
+            }}
+          >
+            <Table
+              columns={columns}
+              dataSource={filteredUsers}
+              rowKey="UserID"
+              pagination={{ pageSize: 5 }}
+              onRow={(record) => ({
+                onClick: () => {
+                  onUserSelect && onUserSelect(record);
+                },
+              })}
+            />
+          </ConfigProvider>
+        )}
       </div>
     </div>
   );

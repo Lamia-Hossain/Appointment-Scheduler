@@ -23,6 +23,7 @@ import { Appointment } from "../../validation/dataTypes";
 import { getUserById } from "../../api/services/users.service";
 import GeneralModal from "../GeneralModal";
 import EditAppointment from "./EditAppointment";
+import { Spin } from "antd";
 
 const SeeAppointments = () => {
   const dispatch = useDispatch();
@@ -266,28 +267,32 @@ const SeeAppointments = () => {
           style={{ marginTop: 10, width: 250 }}
         />
         <div className="overflow-x-auto md:w-[90%] my-3">
-          <ConfigProvider
-            theme={{
-              components: {
-                Table: {
-                  headerBg: "#9974ad",
-                  headerColor: "white",
-                  colorText: "#3C3D37",
+          {isLoading ? (
+            <Spin />
+          ) : (
+            <ConfigProvider
+              theme={{
+                components: {
+                  Table: {
+                    headerBg: "#9974ad",
+                    headerColor: "white",
+                    colorText: "#3C3D37",
+                  },
                 },
-              },
-            }}
-          >
-            <Table
-              columns={columns}
-              dataSource={filteredAppointments}
-              bordered
-              pagination={{
-                pageSize: 5,
-                position: ["bottomCenter"],
               }}
-              rowClassName={rowClassName}
-            />
-          </ConfigProvider>
+            >
+              <Table
+                columns={columns}
+                dataSource={filteredAppointments}
+                bordered
+                pagination={{
+                  pageSize: 5,
+                  position: ["bottomCenter"],
+                }}
+                rowClassName={rowClassName}
+              />
+            </ConfigProvider>
+          )}
         </div>
       </div>
 

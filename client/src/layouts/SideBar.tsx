@@ -3,7 +3,6 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu } from "antd";
 import { CalendarOutlined, UsergroupAddOutlined } from "@ant-design/icons";
 import clockCalendar from "../assets/clock-calendar.png";
-import { useSelector } from "react-redux";
 import UserInfo from "./UserInfo";
 
 interface SidebarItem {
