@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // local
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "https://appointment-scheduler-backend.vercel.app";
 
 // request headers
 const headers = {

@@ -11,8 +11,18 @@ dotenv.config();
 // Create express app
 const app = express();
 
+const corsOptions = {
+  origin: [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://appointment-scheduler-gules.vercel.app",
+  ],
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(express.json());
 
@@ -35,6 +45,9 @@ const appointmentRoutes = require("./routes/AppointmentRoutes");
 // Use routes
 app.use("/user", userRoutes);
 app.use("/appointment", appointmentRoutes);
+app.use("/", (req, res) => {
+  return res.json({ message: "Backend Working" });
+});
 
 // Set the port
 const port = process.env.PORT || 8080;
